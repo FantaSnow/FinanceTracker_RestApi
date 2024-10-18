@@ -1,0 +1,42 @@
+using Application.Categorys.Exceptions;
+using Application.Common;
+using Application.Common.Interfaces.Queries;
+using Application.Common.Interfaces.Repositories;
+using Domain.Categorys;
+using MediatR;
+
+namespace Application.Categorys.Commands;
+
+public record CreateCategoryCommand : IRequest<Result<Category, CategoryException>>
+{
+    public required string Name { get; init; }
+}
+
+public class CreateUserCommandHandler(ICategoryRepository categoryRepository, ICategoryQueries categoryQueries)
+    : IRequestHandler<CreateCategoryCommand, Result<Category, CategoryException>>
+{
+    public async Task<Result<Category, CategoryException>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    {
+        var existingCategory = await categoryQueries.GetByName(request.Name, cancellationToken);
+
+        return await existingCategory.Match(
+            c => Task.FromResult<Result<Category, CategoryException>>(new CategoryAlreadyExistsException(c.Id)),
+            async () => await CreateEntity(request.Name, cancellationToken));
+    }
+
+    private async Task<Result<Category, CategoryException>> CreateEntity(
+        string name,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var entity = Category.New(CategoryId.New(), name);
+
+            return await categoryRepository.Add(entity, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            return new CategoryUnknownException(CategoryId.Empty(), exception);
+        }
+    }
+}

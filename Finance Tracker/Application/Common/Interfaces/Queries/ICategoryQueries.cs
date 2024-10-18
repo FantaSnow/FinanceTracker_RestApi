@@ -1,0 +1,12 @@
+using Domain.Categorys;
+using Optional;
+
+namespace Application.Common.Interfaces.Queries;
+
+public interface ICategoryQueries
+{
+    Task<Option<IReadOnlyList<Category>>> GetAll(CancellationToken cancellationToken);
+    Task<Option<Category>> GetById(CategoryId id, CancellationToken cancellationToken);
+    Task<Option<Category>> GetByName(string name, CancellationToken cancellationToken);
+
+}
