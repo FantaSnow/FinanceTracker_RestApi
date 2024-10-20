@@ -34,13 +34,11 @@ public class CategoryRepository(ApplicationDbContext context) : ICategoryReposit
         return category;    
     }
 
-    public async Task<Option<IReadOnlyList<Category>>> GetAll(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Category>> GetAll(CancellationToken cancellationToken)
     {
-        var entity = await context.Categorys
+        return await context.Categorys
             .AsNoTracking()
             .ToListAsync(cancellationToken);
-        
-        return entity.Any() ? Option.Some<IReadOnlyList<Category>>(entity.AsReadOnly()) : Option.None<IReadOnlyList<Category>>();
     }
 
     public async Task<Option<Category>> GetById(CategoryId id, CancellationToken cancellationToken)

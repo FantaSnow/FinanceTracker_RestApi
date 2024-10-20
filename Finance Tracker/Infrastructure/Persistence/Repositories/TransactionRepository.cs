@@ -34,13 +34,11 @@ public class TransactionRepository(ApplicationDbContext context): ITransactionRe
         return transaction;    
     }
 
-    public async Task<Option<IReadOnlyList<Transaction>>> GetAll(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Transaction>> GetAll(CancellationToken cancellationToken)
     {
-        var entity = await context.Transactions
+        return await context.Transactions
             .AsNoTracking()
             .ToListAsync(cancellationToken);
-        
-        return entity.Any() ? Option.Some<IReadOnlyList<Transaction>>(entity.AsReadOnly()) : Option.None<IReadOnlyList<Transaction>>();
     }
 
     public async Task<Option<IReadOnlyList<Transaction>>> GetAllByUser(UserId userId, CancellationToken cancellationToken)

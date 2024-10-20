@@ -40,11 +40,11 @@ public static class ConfigurePersistence
         services.AddScoped<ITransactionQueries>(provider => provider.GetRequiredService<TransactionRepository>());
         
         services.AddScoped<CategoryRepository>();
-        services.AddScoped<CategoryRepository>(provider => provider.GetRequiredService<CategoryRepository>());
+        services.AddScoped<ICategoryRepository>(provider => provider.GetRequiredService<CategoryRepository>());
         services.AddScoped<ICategoryQueries>(provider => provider.GetRequiredService<CategoryRepository>());
         
         services.AddScoped<BankRepository>();
-        services.AddScoped<BankRepository>(provider => provider.GetRequiredService<BankRepository>());
+        services.AddScoped<IBankRepository>(provider => provider.GetRequiredService<BankRepository>());
         services.AddScoped<IBankQueries>(provider => provider.GetRequiredService<BankRepository>());
         
     }

@@ -32,13 +32,11 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository, IUs
         return user;    
     }
 
-    public async Task<Option<IReadOnlyList<User>>> GetAll(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<User>> GetAll(CancellationToken cancellationToken)
     {
-        var entity = await context.Users
+        return await context.Users
             .AsNoTracking()
             .ToListAsync(cancellationToken);
-        
-        return entity.Any() ? Option.Some<IReadOnlyList<User>>(entity.AsReadOnly()) : Option.None<IReadOnlyList<User>>();
     }
 
     public async Task<Option<User>> GetById(UserId id, CancellationToken cancellationToken)
@@ -58,13 +56,5 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository, IUs
         
         return entity == null ? Option.None<User>() : Option.Some(entity);    
     }
-
-    public async Task<decimal> GetBalanceById(UserId id, CancellationToken cancellationToken)
-    {
-        var entity = await context.Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-        
-        return entity!.Balance;    
-    }
+    
 }

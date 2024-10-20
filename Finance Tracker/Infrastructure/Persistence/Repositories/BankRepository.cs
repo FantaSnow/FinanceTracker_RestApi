@@ -33,13 +33,11 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
         return bank;    
     }
 
-    public async Task<Option<IReadOnlyList<Bank>>> GetAll(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Bank>> GetAll(CancellationToken cancellationToken)
     {
-        var entity = await context.Banks
+        return await context.Banks
             .AsNoTracking()
             .ToListAsync(cancellationToken);
-        
-        return entity.Any() ? Option.Some<IReadOnlyList<Bank>>(entity.AsReadOnly()) : Option.None<IReadOnlyList<Bank>>();
     }
 
     public async Task<Option<Bank>> GetById(BankId id, CancellationToken cancellationToken)
