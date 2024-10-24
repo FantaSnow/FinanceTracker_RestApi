@@ -14,14 +14,15 @@ public record UpdateBankCommand : IRequest<Result<Bank, BankException>>
     public required decimal BalanceGoal { get; init; }
 }
 
-public class UpdateBankCommandHandler(IBankRepository bankRepository, IBankQueries bankQueries) 
+public class UpdateBankCommandHandler(IBankRepository bankRepository) 
     : IRequestHandler<UpdateBankCommand, Result<Bank, BankException>>
 {
     public async Task<Result<Bank, BankException>> Handle(UpdateBankCommand request, CancellationToken cancellationToken)
     {
+        
         var bankId = new BankId(request.BankId);
 
-        var existingBank = await bankQueries.GetById(bankId, cancellationToken);
+        var existingBank = await bankRepository.GetById(bankId, cancellationToken);
 
         return await existingBank.Match(
             async b => await UpdateEntity(b, request.Name, request.BalanceGoal, cancellationToken),

@@ -8,17 +8,8 @@ public class BankDtoValidator : AbstractValidator<BankDto>
 {
     public BankDtoValidator()
     {
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .MaximumLength(255)
-            .MinimumLength(3);
-
-        RuleFor(x => x.Balance)
+        RuleFor(x => x.UserId)
             .NotEmpty();
-
-        RuleFor(x => x.BalanceGoal)
-            .NotEmpty();
-
-
+        
     }
 }

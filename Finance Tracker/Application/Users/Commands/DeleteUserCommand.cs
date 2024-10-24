@@ -12,14 +12,14 @@ public record DeleteUserCommand : IRequest<Result<User, UserException>>
     public required Guid UserId { get; init; }
 }
 
-public class DeleteUserCommandHandler(IUserRepository userRepository, IUserQueries userQueries)
+public class DeleteUserCommandHandler(IUserRepository userRepository)
     : IRequestHandler<DeleteUserCommand, Result<User, UserException>>
 {
     public async Task<Result<User, UserException>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
 
-        var existingUser = await userQueries.GetById(userId, cancellationToken);
+        var existingUser = await userRepository.GetById(userId, cancellationToken);
 
         return await existingUser.Match<Task<Result<User, UserException>>>(
             async u => await DeleteEntity(u, cancellationToken),

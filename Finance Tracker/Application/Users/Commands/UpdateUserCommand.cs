@@ -15,13 +15,13 @@ public record UpdateUserCommand : IRequest<Result<User, UserException>>
     public required decimal Balance { get; init; }
 }
 
-public class UpdateUserCommandHandler(IUserRepository userRepository, IUserQueries userQueries) : IRequestHandler<UpdateUserCommand, Result<User, UserException>>
+public class UpdateUserCommandHandler(IUserRepository userRepository) : IRequestHandler<UpdateUserCommand, Result<User, UserException>>
 {
     public async Task<Result<User, UserException>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
 
-        var existingUser = await userQueries.GetById(userId, cancellationToken);
+        var existingUser = await userRepository.GetById(userId, cancellationToken);
 
         return await existingUser.Match(
             async u => await UpdateEntity(u, request.Login, request.Password, request.Balance, cancellationToken),

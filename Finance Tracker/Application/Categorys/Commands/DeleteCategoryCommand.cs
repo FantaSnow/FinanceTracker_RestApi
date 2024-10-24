@@ -12,14 +12,14 @@ public record DeleteCategoryCommand : IRequest<Result<Category, CategoryExceptio
     public required Guid CategoryId { get; init; }
 }
 
-public class DeleteCategoryCommandHandler(ICategoryRepository categoryRepository, ICategoryQueries categoryQueries)
+public class DeleteCategoryCommandHandler(ICategoryRepository categoryRepository)
     : IRequestHandler<DeleteCategoryCommand, Result<Category, CategoryException>>
 {
     public async Task<Result<Category, CategoryException>> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
         var categoryId = new CategoryId(request.CategoryId);
 
-        var existingCategory = await categoryQueries.GetById(categoryId, cancellationToken);
+        var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
 
         return await existingCategory.Match<Task<Result<Category, CategoryException>>>(
             async c => await DeleteEntity(c, cancellationToken),

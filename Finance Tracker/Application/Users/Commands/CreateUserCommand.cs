@@ -13,12 +13,12 @@ public record CreateUserCommand : IRequest<Result<User, UserException>>
     public required string Password { get; init; }
 }
 
-public class CreateUserCommandHandler(IUserRepository userRepository, IUserQueries userQueries)
+public class CreateUserCommandHandler(IUserRepository userRepository)
     : IRequestHandler<CreateUserCommand, Result<User, UserException>>
 {
     public async Task<Result<User, UserException>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var existingUser = await userQueries.GetByLogin(request.Login, cancellationToken);
+        var existingUser = await userRepository.GetByLogin(request.Login, cancellationToken);
 
         return await existingUser.Match(
             u => Task.FromResult<Result<User, UserException>>(new UserAlreadyExistsException(u.Id)),

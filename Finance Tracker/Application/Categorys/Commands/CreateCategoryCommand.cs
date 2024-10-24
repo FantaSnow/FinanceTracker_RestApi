@@ -12,12 +12,12 @@ public record CreateCategoryCommand : IRequest<Result<Category, CategoryExceptio
     public required string Name { get; init; }
 }
 
-public class CreateUserCommandHandler(ICategoryRepository categoryRepository, ICategoryQueries categoryQueries)
+public class CreateUserCommandHandler(ICategoryRepository categoryRepository)
     : IRequestHandler<CreateCategoryCommand, Result<Category, CategoryException>>
 {
     public async Task<Result<Category, CategoryException>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var existingCategory = await categoryQueries.GetByName(request.Name, cancellationToken);
+        var existingCategory = await categoryRepository.GetByName(request.Name, cancellationToken);
 
         return await existingCategory.Match(
             c => Task.FromResult<Result<Category, CategoryException>>(new CategoryAlreadyExistsException(c.Id)),

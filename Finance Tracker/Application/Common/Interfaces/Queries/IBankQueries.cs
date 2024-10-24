@@ -8,7 +8,7 @@ public interface IBankQueries
 {
     Task<IReadOnlyList<Bank>> GetAll(CancellationToken cancellationToken);
     Task<Option<Bank>> GetById(BankId id, CancellationToken cancellationToken);
-    Task<Option<Bank>> GetByNameAndUser(string name, UserId userId, CancellationToken cancellationToken);
+    Task<IReadOnlyList<Bank>> GetAllByUser(UserId id, CancellationToken cancellationToken);
 
-    
+
 }

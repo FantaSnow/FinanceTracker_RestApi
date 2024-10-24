@@ -18,9 +18,10 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository, IUs
 
     public async Task<User> Update(User user, CancellationToken cancellationToken)
     {
-        context.Users.Update(user);
+        context.Entry(user).State = EntityState.Modified;
+    
         await context.SaveChangesAsync(cancellationToken);
-
+    
         return user;    
     }
 
@@ -38,7 +39,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository, IUs
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
-
+    
     public async Task<Option<User>> GetById(UserId id, CancellationToken cancellationToken)
     {
         var entity = await context.Users

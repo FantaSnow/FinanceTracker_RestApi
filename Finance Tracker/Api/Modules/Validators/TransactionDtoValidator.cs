@@ -8,8 +8,6 @@ public class TransactionDtoValidator : AbstractValidator<TransactionDto>
 {
     public TransactionDtoValidator()
     {
-        RuleFor(x => x.Sum).NotEmpty();
         RuleFor(x => x.CategoryId).NotEmpty();
-
     }
 }

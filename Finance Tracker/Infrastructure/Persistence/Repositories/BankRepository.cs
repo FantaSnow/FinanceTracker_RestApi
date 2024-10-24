@@ -19,25 +19,38 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
 
     public async Task<Bank> Update(Bank bank, CancellationToken cancellationToken)
     {
-        context.Banks.Update(bank);
+        context.Entry(bank).State = EntityState.Modified; 
+
         await context.SaveChangesAsync(cancellationToken);
 
         return bank;    
     }
+
 
     public async Task<Bank> Delete(Bank bank, CancellationToken cancellationToken)
     {
-        context.Banks.Remove(bank);
+        context.Entry(bank).State = EntityState.Deleted;
+
         await context.SaveChangesAsync(cancellationToken);
 
         return bank;    
     }
+
+
 
     public async Task<IReadOnlyList<Bank>> GetAll(CancellationToken cancellationToken)
     {
         return await context.Banks
             .AsNoTracking()
             .ToListAsync(cancellationToken);
+    }
+    public async Task<IReadOnlyList<Bank>> GetAllByUser(UserId id, CancellationToken cancellationToken)
+    {
+        var entity = await context.Banks
+            .AsNoTracking()
+            .Where(x => x.UserId == id)
+            .ToListAsync(cancellationToken);
+        return entity;
     }
 
     public async Task<Option<Bank>> GetById(BankId id, CancellationToken cancellationToken)

@@ -15,13 +15,13 @@ public record CreateBankCommand : IRequest<Result<Bank, BankException>>
     public required Guid UserId { get; init; }
 }
 
-public class CreateBankCommandHandler(IBankRepository bankRepository, IBankQueries bankQueries)
+public class CreateBankCommandHandler(IBankRepository bankRepository)
     : IRequestHandler<CreateBankCommand, Result<Bank, BankException>>
 {
     public async Task<Result<Bank, BankException>> Handle(CreateBankCommand request, CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
-        var existingBank = await bankQueries.GetByNameAndUser(request.Name, userId, cancellationToken);
+        var existingBank = await bankRepository.GetByNameAndUser(request.Name, userId, cancellationToken);
 
         return await existingBank.Match(
             c => Task.FromResult<Result<Bank, BankException>>(new BankAlreadyExistsException(c.Id)),
