@@ -1,5 +1,6 @@
 
 using Api.Dtos;
+using Api.Dtos.Categorys;
 using Api.Modules.Errors;
 using Application.Categorys.Commands;
 using Application.Common.Interfaces.Queries;
@@ -13,7 +14,7 @@ namespace Api.Controllers;
 [ApiController]
 public class CategoryController(ISender sender, ICategoryQueries categoryQueries) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("getAll/")]
     public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetAll(CancellationToken cancellationToken)
     {
         var entities = await categoryQueries.GetAll(cancellationToken);
@@ -21,7 +22,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
         return entities.Select(CategoryDto.FromDomainModel).ToList();
     }
     
-    [HttpGet("{categoryId:guid}")]
+    [HttpGet("getById/{categoryId:guid}")]
     public async Task<ActionResult<CategoryDto>> Get([FromRoute] Guid categoryId, CancellationToken cancellationToken)
     {
         var entity = await categoryQueries.GetById(new CategoryId(categoryId), cancellationToken);
@@ -31,8 +32,8 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
             () => NotFound());
     }
 
-    [HttpPost]
-    public async Task<ActionResult<CategoryDto>> Create([FromBody] CategoryDto request, CancellationToken cancellationToken)
+    [HttpPost("create/")]
+    public async Task<ActionResult<CategoryCreateDto>> Create([FromBody] CategoryCreateDto request, CancellationToken cancellationToken)
     {
         var input = new CreateCategoryCommand
         {
@@ -41,12 +42,12 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
 
         var result = await sender.Send(input, cancellationToken);
         
-        return result.Match<ActionResult<CategoryDto>>(
-            f => CategoryDto.FromDomainModel(f),
+        return result.Match<ActionResult<CategoryCreateDto>>(
+            f => CategoryCreateDto.FromDomainModel(f),
             e => e.ToObjectResult());
     }
     
-    [HttpDelete("{categoryId:guid}")]
+    [HttpDelete("delete/{categoryId:guid}")]
     public async Task<ActionResult<CategoryDto>> Delete([FromRoute] Guid categoryId, CancellationToken cancellationToken)
     {
         var input = new DeleteCategoryCommand
@@ -61,21 +62,22 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
             e => e.ToObjectResult());
     }
     
-    [HttpPut]
-    public async Task<ActionResult<CategoryDto>> Update(
-        [FromBody] CategoryDto request,
+    [HttpPut("update/{categoryId:guid}")]
+    public async Task<ActionResult<CategoryUpdateDto>> Update(
+        [FromRoute] Guid categoryId,
+        [FromBody] CategoryUpdateDto request,
         CancellationToken cancellationToken)
     {
         var input = new UpdateCategoryCommand
         {
             Name = request.Name,
-            CategoryId = request.Id!.Value
+            CategoryId = categoryId
         };
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<CategoryDto>>(
-            f => CategoryDto.FromDomainModel(f),
+        return result.Match<ActionResult<CategoryUpdateDto>>(
+            f => CategoryUpdateDto.FromDomainModel(f),
             e => e.ToObjectResult());
     }
 }

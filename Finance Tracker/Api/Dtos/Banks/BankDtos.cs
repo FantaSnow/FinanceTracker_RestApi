@@ -1,9 +1,6 @@
-
 using Domain.Banks;
-using Domain.Users;
 
-
-namespace Api.Dtos;
+namespace Api.Dtos.Banks;
 
 public record BankDto(Guid? BankId,string Name,decimal Balance, decimal BalanceGoal, Guid UserId)
 {

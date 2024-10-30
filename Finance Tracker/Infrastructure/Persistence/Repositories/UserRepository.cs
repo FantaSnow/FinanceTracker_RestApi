@@ -43,7 +43,6 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository, IUs
     public async Task<Option<User>> GetById(UserId id, CancellationToken cancellationToken)
     {
         var entity = await context.Users
-            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity == null ? Option.None<User>() : Option.Some(entity);    

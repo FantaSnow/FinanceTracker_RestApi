@@ -1,8 +1,6 @@
-
 using Domain.Categorys;
-using Domain.Transactions;
 
-namespace Api.Dtos;
+namespace Api.Dtos.Categorys;
 
 public record CategoryDto(Guid? Id, string Name)
 {

@@ -1,4 +1,5 @@
 using Api.Dtos;
+using Api.Dtos.Transactions;
 using Domain.Transactions;
 using FluentValidation;
 

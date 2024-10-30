@@ -1,4 +1,4 @@
-using System.Transactions;
+using Application.Transactions.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,9 +12,11 @@ public static class TransactionErrorHandler
         {
             StatusCode = exception switch
             {
-                // TransactionNotFoundException => StatusCodes.Status404NotFound,
-                // TransactionAlreadyExistsException => StatusCodes.Status409Conflict,
-                // TransactionUnknownException => StatusCodes.Status500InternalServerError,
+                    CategoryNotFoundException=> StatusCodes.Status404NotFound,
+                    UserNotFoundException=> StatusCodes.Status404NotFound,
+                    TransactionNotFoundException => StatusCodes.Status404NotFound,
+                    TransactionAlreadyExistsException => StatusCodes.Status409Conflict,
+                    TransactionUnknownException => StatusCodes.Status500InternalServerError,
                 _ => throw new NotImplementedException("Transaction error handler does not implemented")
             }
         };

@@ -45,7 +45,9 @@ public class AddBankBalanceCommandHandler(IBankRepository bankRepository, IUserR
             user.AddToBalance(-balanceToAdd);
             await userRepository.Update(user, cancellationToken);
             bank.AddToBalance(balanceToAdd);
-            return await bankRepository.Update(bank, cancellationToken);
+            var updatedBank = await bankRepository.Update(bank, cancellationToken);
+            
+            return updatedBank;
         }
         catch (Exception exception)
         {

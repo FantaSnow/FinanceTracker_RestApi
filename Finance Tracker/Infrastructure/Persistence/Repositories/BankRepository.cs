@@ -21,11 +21,14 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
     {
         context.Entry(bank).State = EntityState.Modified; 
 
-        await context.SaveChangesAsync(cancellationToken);
 
         return bank;    
     }
 
+    public async void SaveChangesAsync(CancellationToken cancellationToken)
+    {
+        await context.SaveChangesAsync(cancellationToken);
+    }
 
     public async Task<Bank> Delete(Bank bank, CancellationToken cancellationToken)
     {

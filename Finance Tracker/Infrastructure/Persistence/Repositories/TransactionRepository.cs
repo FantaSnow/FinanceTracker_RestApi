@@ -40,16 +40,7 @@ public class TransactionRepository(ApplicationDbContext context): ITransactionRe
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
-
-    public async Task<Option<IReadOnlyList<Transaction>>> GetAllByUser(UserId userId, CancellationToken cancellationToken)
-    {
-        var entity = await context.Transactions
-            .AsNoTracking()
-            .Where(x => x.UserId == userId)
-            .ToListAsync(cancellationToken);
-
-        return entity.Any() ? Option.Some<IReadOnlyList<Transaction>>(entity.AsReadOnly()) : Option.None<IReadOnlyList<Transaction>>();
-    }
+    
 
     public async Task<Option<Transaction>> GetById(TransactionId id, CancellationToken cancellationToken)
     {
@@ -58,5 +49,13 @@ public class TransactionRepository(ApplicationDbContext context): ITransactionRe
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity == null ? Option.None<Transaction>() : Option.Some(entity);    
+    }
+    public async Task<IReadOnlyList<Transaction>> GetAllByUser(UserId id, CancellationToken cancellationToken)
+    {
+        var entity = await context.Transactions
+            .AsNoTracking()
+            .Where(x => x.UserId == id)
+            .ToListAsync(cancellationToken);
+        return entity;
     }
 }

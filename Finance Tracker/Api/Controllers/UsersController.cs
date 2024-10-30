@@ -1,5 +1,6 @@
 
 using Api.Dtos;
+using Api.Dtos.Users;
 using Api.Modules.Errors;
 using Application.Common.Interfaces.Queries;
 using Application.Users.Commands;
@@ -13,7 +14,7 @@ namespace Api.Controllers;
 [ApiController]
 public class UsersController(ISender sender, IUserQueries userQueries) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("getAll/")]
     public async Task<ActionResult<IReadOnlyList<UserDto>>> GetAll(CancellationToken cancellationToken)
     {
         var entities = await userQueries.GetAll(cancellationToken);
@@ -21,18 +22,18 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
         return entities.Select(UserDto.FromDomainModel).ToList();
     }
 
-    [HttpGet("{userId:guid}")]
+    [HttpGet("getById/{userId:guid}")]
     public async Task<ActionResult<UserDto>> Get([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var entity = await userQueries.GetById(new UserId(userId), cancellationToken);
-
+        
         return entity.Match<ActionResult<UserDto>>(
             u => UserDto.FromDomainModel(u),
             () => NotFound());
     }
 
-    [HttpPost]
-    public async Task<ActionResult<UserDto>> Create([FromBody] UserDto request, CancellationToken cancellationToken)
+    [HttpPost("create/")]
+    public async Task<ActionResult<UserCreateDto>> Create([FromBody] UserCreateDto request,  CancellationToken cancellationToken)
     {
         var input = new CreateUserCommand
         {
@@ -42,17 +43,17 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<UserDto>>(
-            u => UserDto.FromDomainModel(u),
+        return result.Match<ActionResult<UserCreateDto>>(
+            u => UserCreateDto.FromDomainModel(u),
             e => e.ToObjectResult());
     }
 
-    [HttpPut]
-    public async Task<ActionResult<UserDto>> Update([FromBody] UserDto request, CancellationToken cancellationToken)
+    [HttpPut("update/{userId:guid}")]
+    public async Task<ActionResult<UserUpdateDto>> Update([FromRoute] Guid userId,[FromBody] UserUpdateDto request, CancellationToken cancellationToken)
     {
         var input = new UpdateUserCommand
         {
-            UserId = request.Id!.Value,
+            UserId = userId,
             Login = request.Login,
             Password = request.Password,
             Balance = request.Balance
@@ -60,12 +61,12 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<UserDto>>(
-            user => UserDto.FromDomainModel(user),
+        return result.Match<ActionResult<UserUpdateDto>>(
+            user => UserUpdateDto.FromDomainModel(user),
             e => e.ToObjectResult());
     }
 
-    [HttpDelete("{userId:guid}")]
+    [HttpDelete("delete/{userId:guid}")]
     public async Task<ActionResult<UserDto>> Delete([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var input = new DeleteUserCommand

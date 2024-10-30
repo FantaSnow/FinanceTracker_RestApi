@@ -16,7 +16,8 @@ public static class BankErrorHandler
                 BankNotFoundException => StatusCodes.Status404NotFound,
                 BankAlreadyExistsException => StatusCodes.Status409Conflict,
                 BankUnknownException => StatusCodes.Status500InternalServerError,
-                _ => throw new NotImplementedException("Course error handler does not implemented")
+                UserNotFoundException => StatusCodes.Status404NotFound,
+                _ => throw new NotImplementedException("Bank error handler does not implemented")
             }
         };
     }
