@@ -41,7 +41,7 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
     }
 
     [HttpPost("create/{userId:guid}")]
-    public async Task<ActionResult<TransactionDto>> Create([FromRoute] Guid userId,[FromBody] TransactionCreateDto request, CancellationToken cancellationToken)
+    public async Task<ActionResult<TransactionCreateDto>> Create([FromRoute] Guid userId,[FromBody] TransactionCreateDto request, CancellationToken cancellationToken)
     {
         var input = new CreateTransactionCommand
         {
@@ -52,8 +52,8 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
 
         var result = await sender.Send(input, cancellationToken);
         
-        return result.Match<ActionResult<TransactionDto>>(
-            t => TransactionDto.FromDomainModel(t),
+        return result.Match<ActionResult<TransactionCreateDto>>(
+            t => TransactionCreateDto.FromDomainModel(t),
             e => e.ToObjectResult());
     }
     
