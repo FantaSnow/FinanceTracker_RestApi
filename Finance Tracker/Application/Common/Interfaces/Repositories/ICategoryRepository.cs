@@ -1,4 +1,3 @@
-
 using Domain.Categorys;
 using Optional;
 
@@ -11,5 +10,5 @@ public interface ICategoryRepository
     Task<Category> Delete(Category category, CancellationToken cancellationToken);
     Task<Option<Category>> GetByName(string name, CancellationToken cancellationToken);
     Task<Option<Category>> GetById(CategoryId id, CancellationToken cancellationToken);
-
+    Task<IReadOnlyList<Category>> GetAll(CancellationToken cancellationToken);
 }

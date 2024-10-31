@@ -4,7 +4,14 @@ using Domain.Transactions;
 
 namespace Api.Dtos.Transactions;
 
-public record TransactionDto(Guid? Id, decimal Sum ,DateTime CreatedAt,Guid UserId, UserDto? User,Guid CategoryId, CategoryDto? Category)
+public record TransactionDto(
+    Guid? Id,
+    decimal Sum,
+    DateTime CreatedAt,
+    Guid UserId,
+    UserDto? User,
+    Guid CategoryId,
+    CategoryDto? Category)
 {
     public static TransactionDto FromDomainModel(Transaction transaction)
         => new(
@@ -15,6 +22,5 @@ public record TransactionDto(Guid? Id, decimal Sum ,DateTime CreatedAt,Guid User
             User: transaction.User == null ? null : UserDto.FromDomainModel(transaction.User),
             CategoryId: transaction.CategoryId!.Value,
             Category: transaction.Category == null ? null : CategoryDto.FromDomainModel(transaction.Category)
-            );
-            
+        );
 }

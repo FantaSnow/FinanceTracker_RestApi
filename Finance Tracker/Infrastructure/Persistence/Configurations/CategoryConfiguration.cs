@@ -14,6 +14,5 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
             .IsRequired();
 
         builder.Property(x => x.Name).IsRequired().HasColumnType("varchar(255)");
-        
     }
 }

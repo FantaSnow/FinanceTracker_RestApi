@@ -2,7 +2,7 @@
 
 public class User
 {
-    public UserId Id { get; private set;  }
+    public UserId Id { get; private set; }
     public string Login { get; private set; }
     public string Password { get; private set; }
     public decimal Balance { get; private set; }
@@ -18,13 +18,13 @@ public class User
     }
 
     public static User New(UserId id, string login, string password)
-    => new(id, login, password);
+        => new(id, login, password);
 
     public void AddToBalance(decimal balance)
     {
         Balance += balance;
     }
-    
+
     public void SetBalance(decimal balance)
     {
         Balance = balance;
@@ -39,6 +39,4 @@ public class User
     {
         Password = password;
     }
-    
-    
 }

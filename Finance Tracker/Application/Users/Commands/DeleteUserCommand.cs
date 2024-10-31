@@ -1,5 +1,4 @@
 using Application.Common;
-using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
 using Application.Users.Exceptions;
 using Domain.Users;
@@ -15,7 +14,8 @@ public record DeleteUserCommand : IRequest<Result<User, UserException>>
 public class DeleteUserCommandHandler(IUserRepository userRepository)
     : IRequestHandler<DeleteUserCommand, Result<User, UserException>>
 {
-    public async Task<Result<User, UserException>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<User, UserException>> Handle(DeleteUserCommand request,
+        CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
 

@@ -1,8 +1,6 @@
-using Application.Banks.Commands;
 using Application.Common;
 using Application.Common.Interfaces.Repositories;
 using Application.Transactions.Exceptions;
-using Domain.Banks;
 using Domain.Transactions;
 using Domain.Users;
 using MediatR;
@@ -14,7 +12,9 @@ public record DeleteTransactionCommand : IRequest<Result<Transaction, Transactio
     public required Guid TransactionId { get; init; }
 }
 
-public class DeleteTransactionCommandHandler(ITransactionRepository transactionRepository, IUserRepository userRepository)
+public class DeleteTransactionCommandHandler(
+    ITransactionRepository transactionRepository,
+    IUserRepository userRepository)
     : IRequestHandler<DeleteTransactionCommand, Result<Transaction, TransactionException>>
 {
     public async Task<Result<Transaction, TransactionException>> Handle(DeleteTransactionCommand request,
@@ -29,9 +29,11 @@ public class DeleteTransactionCommandHandler(ITransactionRepository transactionR
 
                 return await existingUser.Match<Task<Result<Transaction, TransactionException>>>(
                     async u => await DeleteEntity(t, u, cancellationToken),
-                    () => Task.FromResult<Result<Transaction, TransactionException>>(new UserNotFoundException(t.UserId)));
+                    () => Task.FromResult<Result<Transaction, TransactionException>>(
+                        new UserNotFoundException(t.UserId)));
             },
-            () => Task.FromResult<Result<Transaction, TransactionException>>(new TransactionNotFoundException(transactionId)));
+            () => Task.FromResult<Result<Transaction, TransactionException>>(
+                new TransactionNotFoundException(transactionId)));
     }
 
     private async Task<Result<Transaction, TransactionException>> DeleteEntity(Transaction transaction, User user,
@@ -49,5 +51,4 @@ public class DeleteTransactionCommandHandler(ITransactionRepository transactionR
             return new TransactionUnknownException(transaction.Id, exception);
         }
     }
-    
 }

@@ -1,5 +1,3 @@
-using Application.Common;
-using Application.Users.Exceptions;
 using Domain.Banks;
 using Domain.Users;
 
@@ -9,11 +7,13 @@ public abstract class BankException : Exception
 {
     public BankId? BankId { get; }
     public UserId? UserId { get; }
+
     protected BankException(BankId? bankId, string message, Exception? innerException = null)
         : base(message, innerException)
     {
         BankId = bankId;
     }
+
     protected BankException(UserId? userId, string message, Exception? innerException = null)
         : base(message, innerException)
     {
@@ -22,10 +22,10 @@ public abstract class BankException : Exception
 }
 
 public class BankNotFoundException(BankId id) : BankException(id, $"Bank under id: {id} not found");
+
 public class UserNotFoundException(UserId id) : BankException(id, $"User under id: {id} not found");
 
 public class BankAlreadyExistsException(BankId id) : BankException(id, $"Bank already exists: {id}");
 
 public class BankUnknownException(BankId id, Exception innerException)
     : BankException(id, $"Unknown exception for the Bank under id: {id}", innerException);
-

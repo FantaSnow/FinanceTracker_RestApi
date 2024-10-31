@@ -1,4 +1,3 @@
-using Application.Banks.Commands;
 using FluentValidation;
 
 namespace Application.Transactions.Commands;
@@ -8,6 +7,5 @@ public class UpdateTransactionCommandValidator : AbstractValidator<UpdateTransac
     public UpdateTransactionCommandValidator()
     {
         RuleFor(x => x.TransactionId).NotEmpty();
-  
     }
 }

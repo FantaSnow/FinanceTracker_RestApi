@@ -18,27 +18,33 @@ public record GetByTimeAndCategoryCommand : IRequest<Result<Statistic, Statistic
     public required Guid UserId { get; init; }
 }
 
-public class CreateUserCommandHandler(ICategoryRepository categoryRepository, IUserRepository userRepository, ITransactionRepository transactionRepository)
+public class GetByTimeAndCategoryCommandHandler(
+    ICategoryRepository categoryRepository,
+    IUserRepository userRepository,
+    ITransactionRepository transactionRepository)
     : IRequestHandler<GetByTimeAndCategoryCommand, Result<Statistic, StatisticException>>
 {
-    public async Task<Result<Statistic, StatisticException>> Handle(GetByTimeAndCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Statistic, StatisticException>> Handle(GetByTimeAndCategoryCommand request,
+        CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
         var existingUser = await userRepository.GetById(userId, cancellationToken);
-        
+
         return await existingUser.Match(
-            async u =>
+            async _ =>
             {
-                var categoryId = new CategoryId(request.CategoryId); 
+                var categoryId = new CategoryId(request.CategoryId);
                 var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
 
                 return await existingCategory.Match(
-                async c => await CreateEntity(request.StartDate, request.EndDate, categoryId, userId, cancellationToken),
-                () =>  Task.FromResult<Result<Statistic, StatisticException>>(new CategoryNotFoundException(categoryId))
-                    );
+                    async _ => await CreateEntity(request.StartDate, request.EndDate, categoryId, userId,
+                        cancellationToken),
+                    () => Task.FromResult<Result<Statistic, StatisticException>>(
+                        new CategoryNotFoundException(categoryId))
+                );
             },
-             () =>  Task.FromResult<Result<Statistic, StatisticException>>(new UserNotFoundException(userId))
-            );
+            () => Task.FromResult<Result<Statistic, StatisticException>>(new UserNotFoundException(userId))
+        );
     }
 
     private async Task<Result<Statistic, StatisticException>> CreateEntity(
@@ -52,13 +58,17 @@ public class CreateUserCommandHandler(ICategoryRepository categoryRepository, IU
         {
             var transactions = await transactionRepository.GetAllByUser(userId, cancellationToken);
 
-            var minusTransactions = transactions.Where(t => t.Sum < 0 && t.CategoryId == categoryId && t.CreatedAt >= startDate && t.CreatedAt <= endDate);
-            var plusTransactions = transactions.Where(t => t.Sum > 0 && t.CategoryId == categoryId && t.CreatedAt >= startDate && t.CreatedAt <= endDate);
+            var minusTransactions = transactions.Where(t =>
+                t.Sum < 0 && t.CategoryId == categoryId && t.CreatedAt >= startDate && t.CreatedAt <= endDate);
+            var plusTransactions = transactions.Where(t =>
+                t.Sum > 0 && t.CategoryId == categoryId && t.CreatedAt >= startDate && t.CreatedAt <= endDate);
 
             var plusStatistic = CalculateStatistics(plusTransactions);
             var minusStatistic = CalculateStatistics(minusTransactions);
 
-            var statistic = Statistic.New(minusStatistic.Sum, minusStatistic.TransactionCount, minusStatistic.CategoryCount, plusStatistic.Sum, plusStatistic.TransactionCount, plusStatistic.CategoryCount);
+            var statistic = Statistic.New(minusStatistic.Sum, minusStatistic.TransactionCount,
+                minusStatistic.CategoryCount, plusStatistic.Sum, plusStatistic.TransactionCount,
+                plusStatistic.CategoryCount);
 
             return statistic;
         }
@@ -68,7 +78,8 @@ public class CreateUserCommandHandler(ICategoryRepository categoryRepository, IU
         }
     }
 
-        private (decimal Sum, int TransactionCount, int CategoryCount) CalculateStatistics(IEnumerable<Transaction> transactions)
+    private (decimal Sum, int TransactionCount, int CategoryCount) CalculateStatistics(
+        IEnumerable<Transaction> transactions)
     {
         decimal sum = transactions.Sum(t => t.Sum);
         int transactionCount = transactions.Count();
@@ -76,5 +87,4 @@ public class CreateUserCommandHandler(ICategoryRepository categoryRepository, IU
 
         return (sum, transactionCount, categoryCount);
     }
-
 }

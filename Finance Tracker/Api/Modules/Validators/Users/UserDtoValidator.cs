@@ -1,8 +1,7 @@
-using Api.Dtos;
 using Api.Dtos.Users;
 using FluentValidation;
 
-namespace Api.Modules.Validators;
+namespace Api.Modules.Validators.Users;
 
 public class UserDtoValidator : AbstractValidator<UserDto>
 {

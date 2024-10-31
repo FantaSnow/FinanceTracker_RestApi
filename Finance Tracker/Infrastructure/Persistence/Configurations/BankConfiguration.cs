@@ -11,11 +11,11 @@ public class BankConfiguration : IEntityTypeConfiguration<Bank>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasConversion(x => x.Value, x => new BankId(x));
-        
+
         builder.Property(x => x.Name).IsRequired().HasColumnType("varchar(255)");
 
         builder.Property(x => x.Balance).IsRequired().HasColumnType("decimal(18, 2)");
-        
+
         builder.Property(x => x.BalanceGoal).IsRequired().HasColumnType("decimal(18, 2)");
 
         builder.Property(x => x.UserId)
@@ -25,10 +25,7 @@ public class BankConfiguration : IEntityTypeConfiguration<Bank>
             .WithMany()
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.Navigation(x => x.User).AutoInclude();
 
-        
-        
+        builder.Navigation(x => x.User).AutoInclude();
     }
 }

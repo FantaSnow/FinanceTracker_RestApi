@@ -3,7 +3,7 @@ using Domain.Transactions;
 
 namespace Api.Dtos.Transactions;
 
-public record TransactionCreateDto(decimal Sum ,Guid CategoryId, CategoryDto? Category)
+public record TransactionCreateDto(decimal Sum, Guid CategoryId, CategoryDto? Category)
 {
     public static TransactionCreateDto FromDomainModel(Transaction transaction)
         => new(
@@ -11,5 +11,4 @@ public record TransactionCreateDto(decimal Sum ,Guid CategoryId, CategoryDto? Ca
             CategoryId: transaction.CategoryId!.Value,
             Category: transaction.Category == null ? null : CategoryDto.FromDomainModel(transaction.Category)
         );
-            
 }

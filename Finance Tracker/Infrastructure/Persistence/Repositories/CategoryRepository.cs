@@ -1,8 +1,6 @@
-
 using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
 using Domain.Categorys;
-using Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Optional;
 
@@ -15,7 +13,7 @@ public class CategoryRepository(ApplicationDbContext context) : ICategoryReposit
         await context.Categorys.AddAsync(category, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return category;    
+        return category;
     }
 
     public async Task<Category> Update(Category category, CancellationToken cancellationToken)
@@ -23,7 +21,7 @@ public class CategoryRepository(ApplicationDbContext context) : ICategoryReposit
         context.Categorys.Update(category);
         await context.SaveChangesAsync(cancellationToken);
 
-        return category;    
+        return category;
     }
 
     public async Task<Category> Delete(Category category, CancellationToken cancellationToken)
@@ -31,7 +29,7 @@ public class CategoryRepository(ApplicationDbContext context) : ICategoryReposit
         context.Categorys.Remove(category);
         await context.SaveChangesAsync(cancellationToken);
 
-        return category;    
+        return category;
     }
 
     public async Task<IReadOnlyList<Category>> GetAll(CancellationToken cancellationToken)
@@ -47,7 +45,7 @@ public class CategoryRepository(ApplicationDbContext context) : ICategoryReposit
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        return entity == null ? Option.None<Category>() : Option.Some(entity);    
+        return entity == null ? Option.None<Category>() : Option.Some(entity);
     }
 
     public async Task<Option<Category>> GetByName(string name, CancellationToken cancellationToken)
@@ -56,5 +54,6 @@ public class CategoryRepository(ApplicationDbContext context) : ICategoryReposit
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Name == name, cancellationToken);
 
-        return entity == null ? Option.None<Category>() : Option.Some(entity);       }
+        return entity == null ? Option.None<Category>() : Option.Some(entity);
+    }
 }

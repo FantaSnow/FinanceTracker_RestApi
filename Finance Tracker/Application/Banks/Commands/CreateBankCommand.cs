@@ -1,6 +1,5 @@
 using Application.Banks.Exceptions;
 using Application.Common;
-using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
 using Domain.Banks;
 using Domain.Users;
@@ -18,7 +17,8 @@ public record CreateBankCommand : IRequest<Result<Bank, BankException>>
 public class CreateBankCommandHandler(IBankRepository bankRepository)
     : IRequestHandler<CreateBankCommand, Result<Bank, BankException>>
 {
-    public async Task<Result<Bank, BankException>> Handle(CreateBankCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Bank, BankException>> Handle(CreateBankCommand request,
+        CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
         var existingBank = await bankRepository.GetByNameAndUser(request.Name, userId, cancellationToken);

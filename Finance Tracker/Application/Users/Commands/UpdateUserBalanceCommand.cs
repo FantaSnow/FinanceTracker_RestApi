@@ -1,5 +1,4 @@
 using Application.Common;
-using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
 using Application.Users.Exceptions;
 using Domain.Users;
@@ -13,9 +12,11 @@ public record UpdateUserBalanceCommand : IRequest<Result<User, UserException>>
     public required decimal Balance { get; init; }
 }
 
-public class UpdateUserBalanceCommandHandler(IUserRepository userRepository) : IRequestHandler<UpdateUserCommand, Result<User, UserException>>
+public class UpdateUserBalanceCommandHandler(IUserRepository userRepository)
+    : IRequestHandler<UpdateUserCommand, Result<User, UserException>>
 {
-    public async Task<Result<User, UserException>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<User, UserException>> Handle(UpdateUserCommand request,
+        CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
 

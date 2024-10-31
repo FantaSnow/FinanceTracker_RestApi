@@ -2,10 +2,15 @@ using Domain.Statistics;
 
 namespace Api.Dtos.Statistics;
 
-public record StatisicDto(decimal MinusSum, int MinusCoutTransaction, int MinusCoutCategory,decimal PlusSum, int PlusCoutTransaction, int PlusCoutCategory)
+public record StatisicDto(
+    decimal MinusSum,
+    int MinusCoutTransaction,
+    int MinusCoutCategory,
+    decimal PlusSum,
+    int PlusCoutTransaction,
+    int PlusCoutCategory)
 {
     public static StatisicDto FromDomainModel(Statistic statistic)
-
         => new(
             MinusSum: statistic.MinusSum,
             MinusCoutTransaction: statistic.MinusCoutTransaction,
@@ -13,6 +18,5 @@ public record StatisicDto(decimal MinusSum, int MinusCoutTransaction, int MinusC
             PlusSum: statistic.PlusSum,
             PlusCoutTransaction: statistic.PlusCoutTransaction,
             PlusCoutCategory: statistic.PlusCoutCategory
-            );
-
+        );
 }

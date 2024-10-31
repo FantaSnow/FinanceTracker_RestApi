@@ -6,7 +6,6 @@ public class AddBankBalanceCommandValidator : AbstractValidator<AddBankBalanceCo
 {
     public AddBankBalanceCommandValidator()
     {
-
         RuleFor(x => x.BankId).NotEmpty();
     }
 }

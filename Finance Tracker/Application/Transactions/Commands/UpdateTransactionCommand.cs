@@ -1,8 +1,6 @@
-using Application.Banks.Commands;
 using Application.Common;
 using Application.Common.Interfaces.Repositories;
 using Application.Transactions.Exceptions;
-using Domain.Banks;
 using Domain.Categorys;
 using Domain.Transactions;
 using MediatR;
@@ -27,7 +25,8 @@ public class UpdateTransactionCommandHandler(ITransactionRepository transactionR
 
         return await existingTransaction.Match(
             async t => await UpdateEntity(t, request.Sum, new CategoryId(request.CategoryId), cancellationToken),
-            () => Task.FromResult<Result<Transaction, TransactionException>>(new TransactionNotFoundException(transactionId)));
+            () => Task.FromResult<Result<Transaction, TransactionException>>(
+                new TransactionNotFoundException(transactionId)));
     }
 
     private async Task<Result<Transaction, TransactionException>> UpdateEntity(

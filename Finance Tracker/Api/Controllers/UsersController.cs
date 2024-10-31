@@ -1,5 +1,3 @@
-
-using Api.Dtos;
 using Api.Dtos.Users;
 using Api.Modules.Errors;
 using Application.Common.Interfaces.Queries;
@@ -26,14 +24,15 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
     public async Task<ActionResult<UserDto>> Get([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
         var entity = await userQueries.GetById(new UserId(userId), cancellationToken);
-        
+
         return entity.Match<ActionResult<UserDto>>(
             u => UserDto.FromDomainModel(u),
             () => NotFound());
     }
 
     [HttpPost("create/")]
-    public async Task<ActionResult<UserCreateDto>> Create([FromBody] UserCreateDto request,  CancellationToken cancellationToken)
+    public async Task<ActionResult<UserCreateDto>> Create([FromBody] UserCreateDto request,
+        CancellationToken cancellationToken)
     {
         var input = new CreateUserCommand
         {
@@ -49,7 +48,8 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
     }
 
     [HttpPut("update/{userId:guid}")]
-    public async Task<ActionResult<UserUpdateDto>> Update([FromRoute] Guid userId,[FromBody] UserUpdateDto request, CancellationToken cancellationToken)
+    public async Task<ActionResult<UserUpdateDto>> Update([FromRoute] Guid userId, [FromBody] UserUpdateDto request,
+        CancellationToken cancellationToken)
     {
         var input = new UpdateUserCommand
         {

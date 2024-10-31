@@ -1,4 +1,3 @@
-using Application.Banks.Commands;
 using FluentValidation;
 
 namespace Application.Transactions.Commands;

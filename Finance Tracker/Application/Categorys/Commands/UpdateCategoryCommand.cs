@@ -1,6 +1,5 @@
 using Application.Categorys.Exceptions;
 using Application.Common;
-using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
 using Domain.Categorys;
 using MediatR;
@@ -13,10 +12,11 @@ public record UpdateCategoryCommand : IRequest<Result<Category, CategoryExceptio
     public required string Name { get; init; }
 }
 
-public class UpdateCategoryCommandHandler(ICategoryRepository categoryRepository) 
+public class UpdateCategoryCommandHandler(ICategoryRepository categoryRepository)
     : IRequestHandler<UpdateCategoryCommand, Result<Category, CategoryException>>
 {
-    public async Task<Result<Category, CategoryException>> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Category, CategoryException>> Handle(UpdateCategoryCommand request,
+        CancellationToken cancellationToken)
     {
         var categoryId = new CategoryId(request.CategoryId);
 
@@ -35,7 +35,7 @@ public class UpdateCategoryCommandHandler(ICategoryRepository categoryRepository
         try
         {
             entity.UpdateName(name);
-            
+
             return await categoryRepository.Update(entity, cancellationToken);
         }
         catch (Exception exception)

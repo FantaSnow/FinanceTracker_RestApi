@@ -12,11 +12,11 @@ public static class TransactionErrorHandler
         {
             StatusCode = exception switch
             {
-                    CategoryNotFoundException=> StatusCodes.Status404NotFound,
-                    UserNotFoundException=> StatusCodes.Status404NotFound,
-                    TransactionNotFoundException => StatusCodes.Status404NotFound,
-                    TransactionAlreadyExistsException => StatusCodes.Status409Conflict,
-                    TransactionUnknownException => StatusCodes.Status500InternalServerError,
+                CategoryNotFoundException => StatusCodes.Status404NotFound,
+                UserNotFoundException => StatusCodes.Status404NotFound,
+                TransactionNotFoundException => StatusCodes.Status404NotFound,
+                TransactionAlreadyExistsException => StatusCodes.Status409Conflict,
+                TransactionUnknownException => StatusCodes.Status500InternalServerError,
                 _ => throw new NotImplementedException("Transaction error handler does not implemented")
             }
         };

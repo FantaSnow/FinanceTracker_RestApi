@@ -1,8 +1,7 @@
-
 using Api.Dtos.Banks;
 using FluentValidation;
 
-namespace Api.Modules.Validators;
+namespace Api.Modules.Validators.Banks;
 
 public class BankDtoValidator : AbstractValidator<BankDto>
 {
@@ -10,6 +9,5 @@ public class BankDtoValidator : AbstractValidator<BankDto>
     {
         RuleFor(x => x.UserId)
             .NotEmpty();
-        
     }
 }

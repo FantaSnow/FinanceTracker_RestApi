@@ -1,4 +1,3 @@
-using Application.Categorys.Exceptions;
 using Domain.Categorys;
 using Domain.Users;
 
@@ -8,11 +7,13 @@ public abstract class StatisticException : Exception
 {
     public CategoryId? CategoryId { get; }
     public UserId? UserId { get; }
+
     protected StatisticException(CategoryId? bankId, string message, Exception? innerException = null)
         : base(message, innerException)
     {
         CategoryId = bankId;
     }
+
     protected StatisticException(UserId? userId, string message, Exception? innerException = null)
         : base(message, innerException)
     {

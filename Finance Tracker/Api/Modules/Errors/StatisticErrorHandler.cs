@@ -1,4 +1,3 @@
-
 using Application.Statistics.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 

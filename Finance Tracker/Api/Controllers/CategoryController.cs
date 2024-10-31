@@ -1,5 +1,3 @@
-
-using Api.Dtos;
 using Api.Dtos.Categorys;
 using Api.Modules.Errors;
 using Application.Categorys.Commands;
@@ -21,7 +19,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
 
         return entities.Select(CategoryDto.FromDomainModel).ToList();
     }
-    
+
     [HttpGet("getById/{categoryId:guid}")]
     public async Task<ActionResult<CategoryDto>> Get([FromRoute] Guid categoryId, CancellationToken cancellationToken)
     {
@@ -33,7 +31,8 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
     }
 
     [HttpPost("create/")]
-    public async Task<ActionResult<CategoryCreateDto>> Create([FromBody] CategoryCreateDto request, CancellationToken cancellationToken)
+    public async Task<ActionResult<CategoryCreateDto>> Create([FromBody] CategoryCreateDto request,
+        CancellationToken cancellationToken)
     {
         var input = new CreateCategoryCommand
         {
@@ -41,14 +40,15 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
         };
 
         var result = await sender.Send(input, cancellationToken);
-        
+
         return result.Match<ActionResult<CategoryCreateDto>>(
             f => CategoryCreateDto.FromDomainModel(f),
             e => e.ToObjectResult());
     }
-    
+
     [HttpDelete("delete/{categoryId:guid}")]
-    public async Task<ActionResult<CategoryDto>> Delete([FromRoute] Guid categoryId, CancellationToken cancellationToken)
+    public async Task<ActionResult<CategoryDto>> Delete([FromRoute] Guid categoryId,
+        CancellationToken cancellationToken)
     {
         var input = new DeleteCategoryCommand
         {
@@ -61,7 +61,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
             u => CategoryDto.FromDomainModel(u),
             e => e.ToObjectResult());
     }
-    
+
     [HttpPut("update/{categoryId:guid}")]
     public async Task<ActionResult<CategoryUpdateDto>> Update(
         [FromRoute] Guid categoryId,

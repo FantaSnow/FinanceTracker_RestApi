@@ -21,8 +21,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 await app.InitialiseDb();
 app.MapControllers();
 
 app.Run();
-

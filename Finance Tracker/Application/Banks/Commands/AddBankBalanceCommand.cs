@@ -1,6 +1,5 @@
 using Application.Banks.Exceptions;
 using Application.Common;
-using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
 using Domain.Banks;
 using Domain.Users;
@@ -46,7 +45,7 @@ public class AddBankBalanceCommandHandler(IBankRepository bankRepository, IUserR
             await userRepository.Update(user, cancellationToken);
             bank.AddToBalance(balanceToAdd);
             var updatedBank = await bankRepository.Update(bank, cancellationToken);
-            
+
             return updatedBank;
         }
         catch (Exception exception)

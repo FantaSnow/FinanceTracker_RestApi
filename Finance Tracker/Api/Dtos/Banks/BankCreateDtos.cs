@@ -7,6 +7,6 @@ public record BankCreateDto(string Name, decimal BalanceGoal)
     public static BankCreateDto FromDomainModel(Bank bank)
         => new(
             Name: bank.Name,
-            BalanceGoal:bank.BalanceGoal
-            );
+            BalanceGoal: bank.BalanceGoal
+        );
 }

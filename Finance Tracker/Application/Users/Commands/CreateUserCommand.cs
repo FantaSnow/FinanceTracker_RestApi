@@ -1,5 +1,4 @@
 using Application.Common;
-using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
 using Application.Users.Exceptions;
 using Domain.Users;
@@ -16,7 +15,8 @@ public record CreateUserCommand : IRequest<Result<User, UserException>>
 public class CreateUserCommandHandler(IUserRepository userRepository)
     : IRequestHandler<CreateUserCommand, Result<User, UserException>>
 {
-    public async Task<Result<User, UserException>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<User, UserException>> Handle(CreateUserCommand request,
+        CancellationToken cancellationToken)
     {
         var existingUser = await userRepository.GetByLogin(request.Login, cancellationToken);
 

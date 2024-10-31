@@ -13,7 +13,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).HasConversion(x => x.Value, x => new TransactionId(x));
-        
+
         builder.Property(x => x.CategoryId)
             .HasConversion(x => x.Value, x => new CategoryId(x))
             .IsRequired();
@@ -21,7 +21,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .WithMany()
             .HasForeignKey(x => x.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder.Property(x => x.UserId)
             .HasConversion(x => x.Value, x => new UserId(x))
             .IsRequired();
@@ -29,9 +29,9 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .WithMany()
             .HasForeignKey(x => x.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.Property(x => x.Sum).IsRequired().HasColumnType("decimal(18, 2)");
-        
+
         builder.Property(x => x.CreatedAt)
             .HasConversion(new DateTimeUtcConverter())
             .HasDefaultValueSql("timezone('utc', now())");

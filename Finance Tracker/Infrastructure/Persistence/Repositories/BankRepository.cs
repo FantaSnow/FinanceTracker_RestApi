@@ -14,15 +14,16 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
         await context.Banks.AddAsync(bank, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return bank;    
+        return bank;
     }
 
     public async Task<Bank> Update(Bank bank, CancellationToken cancellationToken)
     {
-        context.Entry(bank).State = EntityState.Modified; 
+        context.Entry(bank).State = EntityState.Modified;
 
+        await context.SaveChangesAsync(cancellationToken);
 
-        return bank;    
+        return bank;
     }
 
     public async void SaveChangesAsync(CancellationToken cancellationToken)
@@ -36,9 +37,8 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return bank;    
+        return bank;
     }
-
 
 
     public async Task<IReadOnlyList<Bank>> GetAll(CancellationToken cancellationToken)
@@ -47,6 +47,7 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
+
     public async Task<IReadOnlyList<Bank>> GetAllByUser(UserId id, CancellationToken cancellationToken)
     {
         var entity = await context.Banks
@@ -62,7 +63,7 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-        return entity == null ? Option.None<Bank>() : Option.Some(entity);    
+        return entity == null ? Option.None<Bank>() : Option.Some(entity);
     }
 
     public async Task<Option<Bank>> GetByNameAndUser(string name, UserId userId, CancellationToken cancellationToken)
@@ -71,6 +72,6 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Name == name && x.UserId == userId, cancellationToken);
 
-        return entity == null ? Option.None<Bank>() : Option.Some(entity);        
+        return entity == null ? Option.None<Bank>() : Option.Some(entity);
     }
 }

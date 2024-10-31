@@ -33,5 +33,4 @@ public class Bank
     {
         Balance += balance;
     }
-    
 }

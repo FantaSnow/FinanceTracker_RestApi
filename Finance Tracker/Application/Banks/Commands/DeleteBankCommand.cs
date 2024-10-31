@@ -1,9 +1,6 @@
-using System.Transactions;
 using Application.Banks.Exceptions;
 using Application.Common;
-using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
-using Application.Users.Exceptions;
 using Domain.Banks;
 using Domain.Users;
 using MediatR;
@@ -49,5 +46,4 @@ public class DeleteBankCommandHandler(IBankRepository bankRepository, IUserRepos
             return new BankUnknownException(bank.Id, exception);
         }
     }
-    
 }

@@ -16,5 +16,5 @@ public record UserDto(
             Password: user.Password,
             Balance: user.Balance,
             CreatedAt: user.CreatedAt
-            );
+        );
 }

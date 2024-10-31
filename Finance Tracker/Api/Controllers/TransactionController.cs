@@ -1,4 +1,3 @@
-using Api.Dtos;
 using Api.Dtos.Transactions;
 using Api.Modules.Errors;
 using Application.Common.Interfaces.Queries;
@@ -21,17 +20,19 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
 
         return entities.Select(TransactionDto.FromDomainModel).ToList();
     }
-    
+
     [HttpGet("getAllByUser/{userId:guid}")]
-    public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAllByUser([FromRoute] Guid userId,CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAllByUser([FromRoute] Guid userId,
+        CancellationToken cancellationToken)
     {
-        var entities = await transactionQueries.GetAllByUser(new UserId(userId),cancellationToken);
+        var entities = await transactionQueries.GetAllByUser(new UserId(userId), cancellationToken);
 
         return entities.Select(TransactionDto.FromDomainModel).ToList();
     }
-    
+
     [HttpGet("getById/{transactionId:guid}")]
-    public async Task<ActionResult<TransactionDto>> Get([FromRoute] Guid transactionId, CancellationToken cancellationToken)
+    public async Task<ActionResult<TransactionDto>> Get([FromRoute] Guid transactionId,
+        CancellationToken cancellationToken)
     {
         var entity = await transactionQueries.GetById(new TransactionId(transactionId), cancellationToken);
 
@@ -41,7 +42,8 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
     }
 
     [HttpPost("create/{userId:guid}")]
-    public async Task<ActionResult<TransactionCreateDto>> Create([FromRoute] Guid userId,[FromBody] TransactionCreateDto request, CancellationToken cancellationToken)
+    public async Task<ActionResult<TransactionCreateDto>> Create([FromRoute] Guid userId,
+        [FromBody] TransactionCreateDto request, CancellationToken cancellationToken)
     {
         var input = new CreateTransactionCommand
         {
@@ -51,14 +53,15 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
         };
 
         var result = await sender.Send(input, cancellationToken);
-        
+
         return result.Match<ActionResult<TransactionCreateDto>>(
             t => TransactionCreateDto.FromDomainModel(t),
             e => e.ToObjectResult());
     }
-    
+
     [HttpDelete("delete/{transactionId:guid}")]
-    public async Task<ActionResult<TransactionDto>> Delete([FromRoute] Guid transactionId, CancellationToken cancellationToken)
+    public async Task<ActionResult<TransactionDto>> Delete([FromRoute] Guid transactionId,
+        CancellationToken cancellationToken)
     {
         var input = new DeleteTransactionCommand
         {
@@ -71,14 +74,13 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
             u => TransactionDto.FromDomainModel(u),
             e => e.ToObjectResult());
     }
-    
+
     [HttpPut("update/{transactionId:guid}")]
     public async Task<ActionResult<TransactionUpdateDto>> Update(
         [FromRoute] Guid transactionId,
         [FromBody] TransactionUpdateDto request,
         CancellationToken cancellationToken)
     {
-        
         var input = new UpdateTransactionCommand
         {
             TransactionId = transactionId,

@@ -8,5 +8,5 @@ public record CategoryDto(Guid? Id, string Name)
         => new(
             Id: category.Id.Value,
             Name: category.Name
-            );
+        );
 }

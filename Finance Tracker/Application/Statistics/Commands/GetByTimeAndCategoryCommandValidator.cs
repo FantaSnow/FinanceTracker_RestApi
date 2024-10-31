@@ -1,5 +1,4 @@
-﻿using Application.Categorys.Commands;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Application.Statistics.Commands;
 
@@ -11,6 +10,5 @@ public class GetByTimeAndCategoryCommandValidator : AbstractValidator<GetByTimeA
         RuleFor(x => x.EndDate).NotEmpty();
         RuleFor(x => x.CategoryId).NotEmpty();
         RuleFor(x => x.UserId).NotEmpty();
-
     }
 }

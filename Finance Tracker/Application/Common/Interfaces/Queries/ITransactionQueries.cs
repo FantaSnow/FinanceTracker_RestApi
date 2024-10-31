@@ -1,4 +1,3 @@
-
 using Domain.Transactions;
 using Domain.Users;
 using Optional;
@@ -10,5 +9,4 @@ public interface ITransactionQueries
     Task<IReadOnlyList<Transaction>> GetAll(CancellationToken cancellationToken);
     Task<Option<Transaction>> GetById(TransactionId id, CancellationToken cancellationToken);
     Task<IReadOnlyList<Transaction>> GetAllByUser(UserId id, CancellationToken cancellationToken);
-
 }
