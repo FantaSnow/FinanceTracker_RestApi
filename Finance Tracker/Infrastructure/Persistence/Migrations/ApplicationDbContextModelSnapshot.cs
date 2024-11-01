@@ -123,6 +123,12 @@ namespace Infrastructure.Persistence.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("timezone('utc', now())");
 
+                    b.Property<bool>("IsAdmin")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_admin");
+
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasColumnType("varchar(255)")

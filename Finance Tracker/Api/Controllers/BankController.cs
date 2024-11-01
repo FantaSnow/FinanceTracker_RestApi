@@ -5,6 +5,7 @@ using Application.Common.Interfaces.Queries;
 using Domain.Banks;
 using Domain.Users;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -13,6 +14,7 @@ namespace Api.Controllers;
 [ApiController]
 public class BankController(ISender sender, IBankQueries bankQueries) : ControllerBase
 {
+    [AllowAnonymous]
     [HttpGet("getAll")]
     public async Task<ActionResult<IReadOnlyList<BankDto>>> GetAll(CancellationToken cancellationToken)
     {
@@ -21,6 +23,7 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
         return entities.Select(BankDto.FromDomainModel).ToList();
     }
 
+    [AllowAnonymous]
     [HttpGet("getAllByUser/{userId:guid}")]
     public async Task<ActionResult<IReadOnlyList<BankDto>>> GetAllByUser([FromRoute] Guid userId,
         CancellationToken cancellationToken)
@@ -30,6 +33,7 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
         return entities.Select(BankDto.FromDomainModel).ToList();
     }
 
+    [AllowAnonymous]
     [HttpGet("getById/{bankId:guid}")]
     public async Task<ActionResult<BankDto>> Get([FromRoute] Guid bankId, CancellationToken cancellationToken)
     {
@@ -40,6 +44,7 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
             () => NotFound());
     }
 
+    [Authorize]
     [HttpPost("create/{userId:guid}")]
     public async Task<ActionResult<BankCreateDto>> Create([FromRoute] Guid userId, [FromBody] BankCreateDto request,
         CancellationToken cancellationToken)
@@ -58,6 +63,7 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
             e => e.ToObjectResult());
     }
 
+    [Authorize]
     [HttpPut("addToBalance/{bankId:guid}/{balanceToAdd:decimal}")]
     public async Task<ActionResult<BankDto>> AddToBalance(
         [FromRoute] Guid bankId,
@@ -77,7 +83,7 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
             e => e.ToObjectResult());
     }
 
-
+    [Authorize]
     [HttpDelete("delete/{bankId:guid}")]
     public async Task<ActionResult<BankDto>> Delete([FromRoute] Guid bankId, CancellationToken cancellationToken)
     {
@@ -93,6 +99,7 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
             e => e.ToObjectResult());
     }
 
+    [Authorize]
     [HttpPut("update/{bankId:guid}")]
     public async Task<ActionResult<BankUpdateDto>> Update(
         [FromRoute] Guid bankId,

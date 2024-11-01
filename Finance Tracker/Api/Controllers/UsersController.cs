@@ -4,6 +4,7 @@ using Application.Common.Interfaces.Queries;
 using Application.Users.Commands;
 using Domain.Users;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -12,6 +13,7 @@ namespace Api.Controllers;
 [ApiController]
 public class UsersController(ISender sender, IUserQueries userQueries) : ControllerBase
 {
+    [AllowAnonymous]
     [HttpGet("getAll/")]
     public async Task<ActionResult<IReadOnlyList<UserDto>>> GetAll(CancellationToken cancellationToken)
     {
@@ -20,6 +22,7 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
         return entities.Select(UserDto.FromDomainModel).ToList();
     }
 
+    [AllowAnonymous]
     [HttpGet("getById/{userId:guid}")]
     public async Task<ActionResult<UserDto>> Get([FromRoute] Guid userId, CancellationToken cancellationToken)
     {
@@ -29,7 +32,19 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
             u => UserDto.FromDomainModel(u),
             () => NotFound());
     }
+    
+    [AllowAnonymous]
+    [HttpGet("getBalanceById/{userId:guid}")]
+    public async Task<ActionResult<UserBalanceDto>> GetBalanceById([FromRoute] Guid userId, CancellationToken cancellationToken)
+    {
+        var entity = await userQueries.GetById(new UserId(userId), cancellationToken);
 
+        return entity.Match<ActionResult<UserBalanceDto>>(
+            u => UserBalanceDto.FromDomainModel(u),
+            () => NotFound());
+    }
+
+    [Authorize]
     [HttpPost("create/")]
     public async Task<ActionResult<UserCreateDto>> Create([FromBody] UserCreateDto request,
         CancellationToken cancellationToken)
@@ -47,6 +62,7 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
             e => e.ToObjectResult());
     }
 
+    [Authorize]
     [HttpPut("update/{userId:guid}")]
     public async Task<ActionResult<UserUpdateDto>> Update([FromRoute] Guid userId, [FromBody] UserUpdateDto request,
         CancellationToken cancellationToken)
@@ -66,6 +82,7 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
             e => e.ToObjectResult());
     }
 
+    [Authorize]
     [HttpDelete("delete/{userId:guid}")]
     public async Task<ActionResult<UserDto>> Delete([FromRoute] Guid userId, CancellationToken cancellationToken)
     {

@@ -39,7 +39,14 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository, IUs
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
+    public async Task<User?> GetByLoginQ(string login, CancellationToken cancellationToken)
+    {
+        var entity = await context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Login == login, cancellationToken);
 
+        return entity;
+    }
     public async Task<Option<User>> GetById(UserId id, CancellationToken cancellationToken)
     {
         var entity = await context.Users

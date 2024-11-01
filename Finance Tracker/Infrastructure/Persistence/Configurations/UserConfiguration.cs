@@ -21,5 +21,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.CreatedAt)
             .HasConversion(new DateTimeUtcConverter())
             .HasDefaultValueSql("timezone('utc', now())");
+        
+        builder.Property(x => x.IsAdmin)
+            .IsRequired()
+            .HasDefaultValue(false);
     }
 }

@@ -7,7 +7,8 @@ public record UserDto(
     string Login,
     string Password,
     decimal Balance,
-    DateTime? CreatedAt)
+    DateTime? CreatedAt,
+    bool IsAdmin)
 {
     public static UserDto FromDomainModel(User user)
         => new(
@@ -15,6 +16,7 @@ public record UserDto(
             Login: user.Login,
             Password: user.Password,
             Balance: user.Balance,
-            CreatedAt: user.CreatedAt
+            CreatedAt: user.CreatedAt,
+            IsAdmin: user.IsAdmin
         );
 }

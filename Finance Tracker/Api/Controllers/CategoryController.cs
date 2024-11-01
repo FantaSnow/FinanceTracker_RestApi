@@ -1,9 +1,12 @@
 using Api.Dtos.Categorys;
+using Api.Identity;
+using Api.Modules;
 using Api.Modules.Errors;
 using Application.Categorys.Commands;
 using Application.Common.Interfaces.Queries;
 using Domain.Categorys;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -12,6 +15,7 @@ namespace Api.Controllers;
 [ApiController]
 public class CategoryController(ISender sender, ICategoryQueries categoryQueries) : ControllerBase
 {
+    [AllowAnonymous]
     [HttpGet("getAll/")]
     public async Task<ActionResult<IReadOnlyList<CategoryDto>>> GetAll(CancellationToken cancellationToken)
     {
@@ -19,7 +23,8 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
 
         return entities.Select(CategoryDto.FromDomainModel).ToList();
     }
-
+    
+    [AllowAnonymous]
     [HttpGet("getById/{categoryId:guid}")]
     public async Task<ActionResult<CategoryDto>> Get([FromRoute] Guid categoryId, CancellationToken cancellationToken)
     {
@@ -30,6 +35,8 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
             () => NotFound());
     }
 
+    [Authorize]
+    [RequiresClaim(IdentityData.IsAdminClaimName, "True")]
     [HttpPost("create/")]
     public async Task<ActionResult<CategoryCreateDto>> Create([FromBody] CategoryCreateDto request,
         CancellationToken cancellationToken)
@@ -46,6 +53,8 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
             e => e.ToObjectResult());
     }
 
+    [Authorize]
+    [RequiresClaim(IdentityData.IsAdminClaimName, "True")]
     [HttpDelete("delete/{categoryId:guid}")]
     public async Task<ActionResult<CategoryDto>> Delete([FromRoute] Guid categoryId,
         CancellationToken cancellationToken)
@@ -62,6 +71,8 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
             e => e.ToObjectResult());
     }
 
+    [Authorize]
+    [RequiresClaim(IdentityData.IsAdminClaimName, "True")]
     [HttpPut("update/{categoryId:guid}")]
     public async Task<ActionResult<CategoryUpdateDto>> Update(
         [FromRoute] Guid categoryId,

@@ -7,4 +7,6 @@ public interface IUserQueries
 {
     Task<IReadOnlyList<User>> GetAll(CancellationToken cancellationToken);
     Task<Option<User>> GetById(UserId id, CancellationToken cancellationToken);
+    Task<User?> GetByLoginQ(string login, CancellationToken cancellationToken);
+
 }

@@ -2,6 +2,7 @@ using Api.Dtos.Statistics;
 using Api.Modules.Errors;
 using Application.Statistics.Commands;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -10,6 +11,7 @@ namespace Api.Controllers;
 [ApiController]
 public class StatisticController(ISender sender) : ControllerBase
 {
+    [Authorize]
     [HttpGet("getByTimeAndCategory/{startDate:datetime}/{endDate:datetime}/{categoryId:guid}/user=/{userId:guid}")]
     public async Task<ActionResult<StatisicDto>> GetByTimeAndCategory(
         [FromRoute] Guid userId, [FromRoute] DateTime startDate, [FromRoute] DateTime endDate,
@@ -31,6 +33,7 @@ public class StatisticController(ISender sender) : ControllerBase
             e => e.ToObjectResult());
     }
 
+    [Authorize]
     [HttpGet("getForAllCategorys/{startDate:datetime}/{endDate:datetime}/user=/{userId:guid}")]
     public async Task<ActionResult<List<StatisicCategoryDto>>> GetForAllCategorys(
         [FromRoute] Guid userId, [FromRoute] DateTime startDate, [FromRoute] DateTime endDate,

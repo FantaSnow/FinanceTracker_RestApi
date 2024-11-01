@@ -5,6 +5,7 @@ using Application.Transactions.Commands;
 using Domain.Transactions;
 using Domain.Users;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -13,6 +14,7 @@ namespace Api.Controllers;
 [ApiController]
 public class TranasctionController(ISender sender, ITransactionQueries transactionQueries) : ControllerBase
 {
+    [AllowAnonymous]
     [HttpGet("getAll/")]
     public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAll(CancellationToken cancellationToken)
     {
@@ -21,6 +23,7 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
         return entities.Select(TransactionDto.FromDomainModel).ToList();
     }
 
+    [AllowAnonymous]
     [HttpGet("getAllByUser/{userId:guid}")]
     public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAllByUser([FromRoute] Guid userId,
         CancellationToken cancellationToken)
@@ -30,6 +33,7 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
         return entities.Select(TransactionDto.FromDomainModel).ToList();
     }
 
+    [AllowAnonymous]
     [HttpGet("getById/{transactionId:guid}")]
     public async Task<ActionResult<TransactionDto>> Get([FromRoute] Guid transactionId,
         CancellationToken cancellationToken)
@@ -41,6 +45,7 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
             () => NotFound());
     }
 
+    [Authorize]
     [HttpPost("create/{userId:guid}")]
     public async Task<ActionResult<TransactionCreateDto>> Create([FromRoute] Guid userId,
         [FromBody] TransactionCreateDto request, CancellationToken cancellationToken)
@@ -58,7 +63,8 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
             t => TransactionCreateDto.FromDomainModel(t),
             e => e.ToObjectResult());
     }
-
+    
+    [Authorize]
     [HttpDelete("delete/{transactionId:guid}")]
     public async Task<ActionResult<TransactionDto>> Delete([FromRoute] Guid transactionId,
         CancellationToken cancellationToken)
@@ -75,6 +81,7 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
             e => e.ToObjectResult());
     }
 
+    [Authorize]
     [HttpPut("update/{transactionId:guid}")]
     public async Task<ActionResult<TransactionUpdateDto>> Update(
         [FromRoute] Guid transactionId,

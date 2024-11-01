@@ -7,6 +7,7 @@ public class User
     public string Password { get; private set; }
     public decimal Balance { get; private set; }
     public DateTime CreatedAt { get; private set; }
+    public bool IsAdmin { get; private set; }
 
     private User(UserId id, string login, string password)
     {
@@ -15,10 +16,11 @@ public class User
         Password = password;
         Balance = 0m;
         CreatedAt = DateTime.UtcNow;
+        IsAdmin = login == "admin"; 
     }
 
     public static User New(UserId id, string login, string password)
-        => new(id, login, password);
+        => new User(id, login, password);
 
     public void AddToBalance(decimal balance)
     {
@@ -33,6 +35,7 @@ public class User
     public void ChangeLogin(string login)
     {
         Login = login;
+        IsAdmin = login == "admin"; 
     }
 
     public void ChangePassword(string password)

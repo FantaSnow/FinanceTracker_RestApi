@@ -31,7 +31,8 @@ namespace Infrastructure.Persistence.Migrations
                     login = table.Column<string>(type: "varchar(255)", nullable: false),
                     password = table.Column<string>(type: "varchar(255)", nullable: false),
                     balance = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())")
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())"),
+                    is_admin = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
