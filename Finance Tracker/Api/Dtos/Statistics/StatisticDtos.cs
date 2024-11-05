@@ -4,19 +4,19 @@ namespace Api.Dtos.Statistics;
 
 public record StatisicDto(
     decimal MinusSum,
-    int MinusCoutTransaction,
-    int MinusCoutCategory,
+    int MinusCountTransaction,
+    int MinusCountCategory,
     decimal PlusSum,
-    int PlusCoutTransaction,
-    int PlusCoutCategory)
+    int PlusCountTransaction,
+    int PlusCountCategory)
 {
     public static StatisicDto FromDomainModel(Statistic statistic)
         => new(
             MinusSum: statistic.MinusSum,
-            MinusCoutTransaction: statistic.MinusCoutTransaction,
-            MinusCoutCategory: statistic.MinusCoutCategory,
+            MinusCountTransaction: statistic.MinusCoutTransaction,
+            MinusCountCategory: statistic.MinusCoutCategory,
             PlusSum: statistic.PlusSum,
-            PlusCoutTransaction: statistic.PlusCoutTransaction,
-            PlusCoutCategory: statistic.PlusCoutCategory
+            PlusCountTransaction: statistic.PlusCoutTransaction,
+            PlusCountCategory: statistic.PlusCoutCategory
         );
 }

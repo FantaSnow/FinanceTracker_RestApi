@@ -10,4 +10,6 @@ public interface IUserRepository
     Task<User> Delete(User user, CancellationToken cancellationToken);
     Task<Option<User>> GetByLogin(string login, CancellationToken cancellationToken);
     Task<Option<User>> GetById(UserId id, CancellationToken cancellationToken);
+    Task<Option<User>> GetByLoginAndPassword(string login, string password, CancellationToken cancellationToken);
+
 }

@@ -46,7 +46,7 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
 
     [Authorize]
     [HttpPost("create/{userId:guid}")]
-    public async Task<ActionResult<BankCreateDto>> Create([FromRoute] Guid userId, [FromBody] BankCreateDto request,
+    public async Task<ActionResult<BankDto>> Create([FromRoute] Guid userId, [FromBody] BankCreateDto request,
         CancellationToken cancellationToken)
     {
         var input = new CreateBankCommand
@@ -58,8 +58,8 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<BankCreateDto>>(
-            f => BankCreateDto.FromDomainModel(f),
+        return result.Match<ActionResult<BankDto>>(
+            f => BankDto.FromDomainModel(f),
             e => e.ToObjectResult());
     }
 
@@ -101,7 +101,7 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
 
     [Authorize]
     [HttpPut("update/{bankId:guid}")]
-    public async Task<ActionResult<BankUpdateDto>> Update(
+    public async Task<ActionResult<BankDto>> Update(
         [FromRoute] Guid bankId,
         [FromBody] BankUpdateDto request,
         CancellationToken cancellationToken)
@@ -115,8 +115,8 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<BankUpdateDto>>(
-            f => BankUpdateDto.FromDomainModel(f),
+        return result.Match<ActionResult<BankDto>>(
+            f => BankDto.FromDomainModel(f),
             e => e.ToObjectResult());
     }
 }

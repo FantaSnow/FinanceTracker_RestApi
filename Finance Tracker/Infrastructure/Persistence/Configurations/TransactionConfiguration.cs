@@ -25,6 +25,7 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(x => x.UserId)
             .HasConversion(x => x.Value, x => new UserId(x))
             .IsRequired();
+        
         builder.HasOne(x => x.User)
             .WithMany()
             .HasForeignKey(x => x.UserId)

@@ -1,5 +1,4 @@
 using System.Text;
-using Api.Identity;
 using Api.Swagger;
 using FluentValidation;
 using FluentValidation.AspNetCore;

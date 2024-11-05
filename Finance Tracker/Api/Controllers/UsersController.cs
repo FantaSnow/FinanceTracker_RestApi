@@ -1,7 +1,9 @@
 using Api.Dtos.Users;
 using Api.Modules.Errors;
 using Application.Common.Interfaces.Queries;
+using Application.Tickets;
 using Application.Users.Commands;
+using Domain.Identity;
 using Domain.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[Route("users")]
+[Route("users")] 
 [ApiController]
 public class UsersController(ISender sender, IUserQueries userQueries) : ControllerBase
 {
@@ -44,9 +46,9 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
             () => NotFound());
     }
 
-    [Authorize]
+    [AllowAnonymous]
     [HttpPost("create/")]
-    public async Task<ActionResult<UserCreateDto>> Create([FromBody] UserCreateDto request,
+    public async Task<ActionResult<UserDto>> Create([FromBody] UserCreateDto request,
         CancellationToken cancellationToken)
     {
         var input = new CreateUserCommand
@@ -57,14 +59,15 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<UserCreateDto>>(
-            u => UserCreateDto.FromDomainModel(u),
+        return result.Match<ActionResult<UserDto>>(
+            u => UserDto.FromDomainModel(u),
             e => e.ToObjectResult());
     }
 
     [Authorize]
+    [RequiresClaim(IdentityData.IsAdminClaimName, "True")]
     [HttpPut("update/{userId:guid}")]
-    public async Task<ActionResult<UserUpdateDto>> Update([FromRoute] Guid userId, [FromBody] UserUpdateDto request,
+    public async Task<ActionResult<UserDto>> Update([FromRoute] Guid userId, [FromBody] UserUpdateDto request,
         CancellationToken cancellationToken)
     {
         var input = new UpdateUserCommand
@@ -77,12 +80,13 @@ public class UsersController(ISender sender, IUserQueries userQueries) : Control
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<UserUpdateDto>>(
-            user => UserUpdateDto.FromDomainModel(user),
+        return result.Match<ActionResult<UserDto>>(
+            user => UserDto.FromDomainModel(user),
             e => e.ToObjectResult());
     }
 
     [Authorize]
+    [RequiresClaim(IdentityData.IsAdminClaimName, "True")]
     [HttpDelete("delete/{userId:guid}")]
     public async Task<ActionResult<UserDto>> Delete([FromRoute] Guid userId, CancellationToken cancellationToken)
     {

@@ -1,4 +1,4 @@
-﻿namespace Api.Identity;
+﻿namespace Domain.Identity;
 
 public class IdentityData
 {

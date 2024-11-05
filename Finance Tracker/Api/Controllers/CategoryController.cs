@@ -1,10 +1,11 @@
 using Api.Dtos.Categorys;
-using Api.Identity;
 using Api.Modules;
 using Api.Modules.Errors;
 using Application.Categorys.Commands;
 using Application.Common.Interfaces.Queries;
+using Application.Tickets;
 using Domain.Categorys;
+using Domain.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
     [Authorize]
     [RequiresClaim(IdentityData.IsAdminClaimName, "True")]
     [HttpPost("create/")]
-    public async Task<ActionResult<CategoryCreateDto>> Create([FromBody] CategoryCreateDto request,
+    public async Task<ActionResult<CategoryDto>> Create([FromBody] CategoryCreateDto request,
         CancellationToken cancellationToken)
     {
         var input = new CreateCategoryCommand
@@ -48,8 +49,8 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<CategoryCreateDto>>(
-            f => CategoryCreateDto.FromDomainModel(f),
+        return result.Match<ActionResult<CategoryDto>>(
+            f => CategoryDto.FromDomainModel(f),
             e => e.ToObjectResult());
     }
 
@@ -74,7 +75,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
     [Authorize]
     [RequiresClaim(IdentityData.IsAdminClaimName, "True")]
     [HttpPut("update/{categoryId:guid}")]
-    public async Task<ActionResult<CategoryUpdateDto>> Update(
+    public async Task<ActionResult<CategoryDto>> Update(
         [FromRoute] Guid categoryId,
         [FromBody] CategoryUpdateDto request,
         CancellationToken cancellationToken)
@@ -87,8 +88,8 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<CategoryUpdateDto>>(
-            f => CategoryUpdateDto.FromDomainModel(f),
+        return result.Match<ActionResult<CategoryDto>>(
+            f => CategoryDto.FromDomainModel(f),
             e => e.ToObjectResult());
     }
 }

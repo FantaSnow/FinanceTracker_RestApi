@@ -36,6 +36,7 @@ public class TransactionRepository(ApplicationDbContext context) : ITransactionR
     public async Task<IReadOnlyList<Transaction>> GetAll(CancellationToken cancellationToken)
     {
         return await context.Transactions
+            .Include(t => t.Category)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -44,6 +45,7 @@ public class TransactionRepository(ApplicationDbContext context) : ITransactionR
     public async Task<Option<Transaction>> GetById(TransactionId id, CancellationToken cancellationToken)
     {
         var entity = await context.Transactions
+            .Include(t => t.Category)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
@@ -53,6 +55,7 @@ public class TransactionRepository(ApplicationDbContext context) : ITransactionR
     public async Task<IReadOnlyList<Transaction>> GetAllByUser(UserId id, CancellationToken cancellationToken)
     {
         var entity = await context.Transactions
+            .Include(t => t.Category)
             .AsNoTracking()
             .Where(x => x.UserId == id)
             .ToListAsync(cancellationToken);

@@ -1,5 +1,6 @@
 using Api.Dtos.Categorys;
 using Api.Dtos.Users;
+using Domain.Categorys;
 using Domain.Transactions;
 
 namespace Api.Dtos.Transactions;
@@ -10,8 +11,7 @@ public record TransactionDto(
     DateTime CreatedAt,
     Guid UserId,
     UserDto? User,
-    Guid CategoryId,
-    CategoryDto? Category)
+    string CategoryName)
 {
     public static TransactionDto FromDomainModel(Transaction transaction)
         => new(
@@ -20,7 +20,6 @@ public record TransactionDto(
             Sum: transaction.Sum,
             UserId: transaction.UserId.Value,
             User: transaction.User == null ? null : UserDto.FromDomainModel(transaction.User),
-            CategoryId: transaction.CategoryId!.Value,
-            Category: transaction.Category == null ? null : CategoryDto.FromDomainModel(transaction.Category)
+            CategoryName: transaction.Category!.Name 
         );
 }

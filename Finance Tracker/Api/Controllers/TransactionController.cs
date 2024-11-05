@@ -47,7 +47,7 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
 
     [Authorize]
     [HttpPost("create/{userId:guid}")]
-    public async Task<ActionResult<TransactionCreateDto>> Create([FromRoute] Guid userId,
+    public async Task<ActionResult<TransactionDto>> Create([FromRoute] Guid userId,
         [FromBody] TransactionCreateDto request, CancellationToken cancellationToken)
     {
         var input = new CreateTransactionCommand
@@ -59,8 +59,8 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<TransactionCreateDto>>(
-            t => TransactionCreateDto.FromDomainModel(t),
+        return result.Match<ActionResult<TransactionDto>>(
+            t => TransactionDto.FromDomainModel(t),
             e => e.ToObjectResult());
     }
     
@@ -83,7 +83,7 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
 
     [Authorize]
     [HttpPut("update/{transactionId:guid}")]
-    public async Task<ActionResult<TransactionUpdateDto>> Update(
+    public async Task<ActionResult<TransactionDto>> Update(
         [FromRoute] Guid transactionId,
         [FromBody] TransactionUpdateDto request,
         CancellationToken cancellationToken)
@@ -97,8 +97,8 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<TransactionUpdateDto>>(
-            f => TransactionUpdateDto.FromDomainModel(f),
+        return result.Match<ActionResult<TransactionDto>>(
+            f => TransactionDto.FromDomainModel(f),
             e => e.ToObjectResult());
     }
 }

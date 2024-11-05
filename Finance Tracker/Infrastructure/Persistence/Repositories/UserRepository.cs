@@ -55,6 +55,14 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository, IUs
         return entity == null ? Option.None<User>() : Option.Some(entity);
     }
 
+    public async Task<Option<User>> GetByLoginAndPassword(string login, string password, CancellationToken cancellationToken)
+    {
+        var entity = await context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Login == login && x.Password == password, cancellationToken);
+        return entity == null ? Option.None<User>() : Option.Some(entity);
+    }
+
     public async Task<Option<User>> GetByLogin(string login, CancellationToken cancellationToken)
     {
         var entity = await context.Users

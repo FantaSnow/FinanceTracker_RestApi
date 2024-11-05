@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Api.Identity;
+namespace Application.Tickets;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class RequiresClaimAttribute : Attribute, IAuthorizationFilter

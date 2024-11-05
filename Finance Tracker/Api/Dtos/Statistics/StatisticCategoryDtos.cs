@@ -2,14 +2,14 @@ using Domain.Statistics;
 
 namespace Api.Dtos.Statistics;
 
-public record StatisicCategoryDto(string Name, int CoutTransaction, decimal MinusSum, decimal PlusSum)
+public record StatisicCategoryDto(string Name, int CountTransaction, decimal MinusSum, decimal PlusSum)
 {
     public static StatisicCategoryDto FromDomainModel(StatisticCategory statistic)
         => new
         (
             Name: statistic.CategoryName,
             MinusSum: statistic.MinusSum,
-            CoutTransaction: statistic.CoutTransaction,
+            CountTransaction: statistic.CoutTransaction,
             PlusSum: statistic.PlusSum
         );
 }
