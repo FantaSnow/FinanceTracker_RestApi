@@ -15,13 +15,12 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.SetupServices();
 
-// Налаштування політики CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173") // Дозволяє доступ з клієнтського додатку
+            policy.WithOrigins("http://localhost:5173")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         });
@@ -29,7 +28,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -40,7 +38,6 @@ await app.InitialiseDb();
 
 app.UseHttpsRedirection();
 
-// Використання політики CORS
 app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();

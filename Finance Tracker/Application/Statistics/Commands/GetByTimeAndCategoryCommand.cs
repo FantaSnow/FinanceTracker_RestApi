@@ -16,6 +16,7 @@ public record GetByTimeAndCategoryCommand : IRequest<Result<Statistic, Statistic
     public required DateTime EndDate { get; init; }
     public required Guid CategoryId { get; init; }
     public required Guid UserId { get; init; }
+    public required Guid UserIdFromToken { get; init; }
 }
 
 public class GetByTimeAndCategoryCommandHandler(
@@ -28,20 +29,27 @@ public class GetByTimeAndCategoryCommandHandler(
         CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
-        var existingUser = await userRepository.GetById(userId, cancellationToken);
+        var existingUserForStatistic = await userRepository.GetById(userId, cancellationToken);
 
-        return await existingUser.Match(
-            async _ =>
+        return await existingUserForStatistic.Match(
+            async ufs =>
             {
-                var categoryId = new CategoryId(request.CategoryId);
-                var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
+                var userIdFromToken = new UserId(request.UserIdFromToken);
+                var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
 
-                return await existingCategory.Match(
-                    async _ => await CreateEntity(request.StartDate, request.EndDate, categoryId, userId,
-                        cancellationToken),
-                    () => Task.FromResult<Result<Statistic, StatisticException>>(
-                        new CategoryNotFoundException(categoryId))
-                );
+                return await existingUserFromToken.Match(
+                    async uft =>
+                    {
+                        var categoryId = new CategoryId(request.CategoryId);
+                        var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
+
+                        return await existingCategory.Match(
+                            async c => await CreateEntity(request.StartDate, request.EndDate, c,ufs,uft, cancellationToken),
+                            () => Task.FromResult<Result<Statistic, StatisticException>>(
+                                new CategoryNotFoundException(categoryId))
+                        );
+                    },
+                    () => Task.FromResult<Result<Statistic, StatisticException>>(new UserNotFoundException(userId)));
             },
             () => Task.FromResult<Result<Statistic, StatisticException>>(new UserNotFoundException(userId))
         );
@@ -50,31 +58,37 @@ public class GetByTimeAndCategoryCommandHandler(
     private async Task<Result<Statistic, StatisticException>> CreateEntity(
         DateTime startDate,
         DateTime endDate,
-        CategoryId categoryId,
-        UserId userId,
+        Category category,
+        User userForStatistic,
+        User userFromToken,
         CancellationToken cancellationToken)
     {
         try
         {
-            var transactions = await transactionRepository.GetAllByUser(userId, cancellationToken);
+            if (userFromToken.Id == userForStatistic.Id || userFromToken.IsAdmin)
+            {
+                var transactions = await transactionRepository.GetAllByUser(userForStatistic.Id, cancellationToken);
 
-            var minusTransactions = transactions.Where(t =>
-                t.Sum < 0 && t.CategoryId == categoryId && t.CreatedAt >= startDate && t.CreatedAt <= endDate);
-            var plusTransactions = transactions.Where(t =>
-                t.Sum > 0 && t.CategoryId == categoryId && t.CreatedAt >= startDate && t.CreatedAt <= endDate);
+                var minusTransactions = transactions.Where(t =>
+                    t.Sum < 0 && t.CategoryId == category.Id && t.CreatedAt >= startDate && t.CreatedAt <= endDate);
+                var plusTransactions = transactions.Where(t =>
+                    t.Sum > 0 && t.CategoryId == category.Id && t.CreatedAt >= startDate && t.CreatedAt <= endDate);
 
-            var plusStatistic = CalculateStatistics(plusTransactions);
-            var minusStatistic = CalculateStatistics(minusTransactions);
+                var plusStatistic = CalculateStatistics(plusTransactions);
+                var minusStatistic = CalculateStatistics(minusTransactions);
 
-            var statistic = Statistic.New(minusStatistic.Sum, minusStatistic.TransactionCount,
-                minusStatistic.CategoryCount, plusStatistic.Sum, plusStatistic.TransactionCount,
-                plusStatistic.CategoryCount);
+                var statistic = Statistic.New(minusStatistic.Sum, minusStatistic.TransactionCount,
+                    minusStatistic.CategoryCount, plusStatistic.Sum, plusStatistic.TransactionCount,
+                    plusStatistic.CategoryCount);
 
-            return statistic;
+                return statistic;
+            }
+            return await Task.FromResult<Result<Statistic, StatisticException>>(new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, userForStatistic.Id));
+            
         }
         catch (Exception exception)
         {
-            return new StatisticUnknownException(userId, exception);
+            return new StatisticUnknownException(userForStatistic.Id, exception);
         }
     }
 

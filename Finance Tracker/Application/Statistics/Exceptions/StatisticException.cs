@@ -20,6 +20,7 @@ public abstract class StatisticException : Exception
         UserId = userId;
     }
 }
+public class YouDoNotHaveTheAuthorityToDo(UserId idFromToken, UserId idFromUser) : StatisticException(idFromToken, $"You do not have the authority to do. Your id:{idFromToken} | Id what u want to change: {idFromUser}");
 
 public class UserNotFoundException(UserId id) : StatisticException(id, $"User under id: {id} not found");
 

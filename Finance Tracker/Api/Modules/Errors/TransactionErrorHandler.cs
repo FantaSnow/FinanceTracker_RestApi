@@ -17,6 +17,7 @@ public static class TransactionErrorHandler
                 TransactionNotFoundException => StatusCodes.Status404NotFound,
                 TransactionAlreadyExistsException => StatusCodes.Status409Conflict,
                 TransactionUnknownException => StatusCodes.Status500InternalServerError,
+                YouDoNotHaveTheAuthorityToDo => StatusCodes.Status403Forbidden,
                 _ => throw new NotImplementedException("Transaction error handler does not implemented")
             }
         };

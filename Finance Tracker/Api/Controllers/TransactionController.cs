@@ -47,20 +47,23 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
 
     [Authorize]
     [HttpPost("create/{userId:guid}")]
-    public async Task<ActionResult<TransactionDto>> Create([FromRoute] Guid userId,
+    public async Task<ActionResult<TransactionCreateDto>> Create([FromRoute] Guid userId,
         [FromBody] TransactionCreateDto request, CancellationToken cancellationToken)
     {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userIdFromToken = new Guid(userIdClaim!.Value);
         var input = new CreateTransactionCommand
         {
             Sum = request.Sum,
             CategoryId = request.CategoryId,
-            UserId = userId
+            UserId = userId,
+            UserIdFromToken=userIdFromToken
         };
 
         var result = await sender.Send(input, cancellationToken);
 
-        return result.Match<ActionResult<TransactionDto>>(
-            t => TransactionDto.FromDomainModel(t),
+        return result.Match<ActionResult<TransactionCreateDto>>(
+            t => TransactionCreateDto.FromDomainModel(t),
             e => e.ToObjectResult());
     }
     
@@ -69,9 +72,12 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
     public async Task<ActionResult<TransactionDto>> Delete([FromRoute] Guid transactionId,
         CancellationToken cancellationToken)
     {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userIdFromToken = new Guid(userIdClaim!.Value);
         var input = new DeleteTransactionCommand
         {
-            TransactionId = transactionId
+            TransactionId = transactionId,
+            UserIdFromToken=userIdFromToken
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -88,11 +94,15 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
         [FromBody] TransactionUpdateDto request,
         CancellationToken cancellationToken)
     {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userIdFromToken = new Guid(userIdClaim!.Value);
+        
         var input = new UpdateTransactionCommand
         {
             TransactionId = transactionId,
             Sum = request.Sum,
             CategoryId = request.CategoryId,
+            UserIdFromToken = userIdFromToken
         };
 
         var result = await sender.Send(input, cancellationToken);

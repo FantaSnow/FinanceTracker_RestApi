@@ -12,33 +12,61 @@ public record CreateBankCommand : IRequest<Result<Bank, BankException>>
     public required string Name { get; init; }
     public required decimal BalanceGoal { get; init; }
     public required Guid UserId { get; init; }
+    public required Guid UserIdFromToken { get; init; }
 }
 
-public class CreateBankCommandHandler(IBankRepository bankRepository)
+public class CreateBankCommandHandler(IBankRepository bankRepository, IUserRepository userRepository)
     : IRequestHandler<CreateBankCommand, Result<Bank, BankException>>
 {
     public async Task<Result<Bank, BankException>> Handle(CreateBankCommand request,
         CancellationToken cancellationToken)
     {
-        var userId = new UserId(request.UserId);
-        var existingBank = await bankRepository.GetByNameAndUser(request.Name, userId, cancellationToken);
+        var userForBankId = new UserId(request.UserId);
+        var existingUserFromBank = await userRepository.GetById(userForBankId, cancellationToken);
 
-        return await existingBank.Match(
-            c => Task.FromResult<Result<Bank, BankException>>(new BankAlreadyExistsException(c.Id)),
-            async () => await CreateEntity(request.Name, request.BalanceGoal, userId, cancellationToken));
+        return await existingUserFromBank.Match(
+            async ufb =>
+            {
+                var userIdFromToken = new UserId(request.UserIdFromToken);
+                var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
+
+                return await existingUserFromToken.Match(
+                    async uft =>
+                    {
+                        return await CreateEntity(request.Name, request.BalanceGoal, ufb, uft,
+                            cancellationToken);
+                    },
+                    () => Task.FromResult<Result<Bank, BankException>>(
+                        new UserNotFoundException(userIdFromToken)));
+            },
+            () => Task.FromResult<Result<Bank, BankException>>(new UserNotFoundException(userForBankId)));
     }
 
     private async Task<Result<Bank, BankException>> CreateEntity(
         string name,
         decimal balanceGoal,
-        UserId userId,
+        User userForBank,
+        User userFromToken,
         CancellationToken cancellationToken)
     {
         try
         {
-            var entity = Bank.New(BankId.New(), name, balanceGoal, userId);
+            var existingBank = await bankRepository.GetByNameAndUser(name, userForBank.Id, cancellationToken);
 
-            return await bankRepository.Add(entity, cancellationToken);
+            return await existingBank.Match(
+                b => Task.FromResult<Result<Bank, BankException>>(new BankAlreadyExistsException(b.Id)),
+                async () =>
+                {
+                    if (userFromToken.Id == userForBank.Id || userFromToken.IsAdmin)
+                    {
+                        var entity = Bank.New(BankId.New(), name, balanceGoal, userForBank.Id);
+
+                        return await bankRepository.Add(entity, cancellationToken);
+                    }
+
+                    return await Task.FromResult<Result<Bank, BankException>>(
+                        new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, userForBank.Id));
+                });
         }
         catch (Exception exception)
         {

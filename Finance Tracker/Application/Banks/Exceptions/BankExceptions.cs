@@ -27,5 +27,7 @@ public class UserNotFoundException(UserId id) : BankException(id, $"User under i
 
 public class BankAlreadyExistsException(BankId id) : BankException(id, $"Bank already exists: {id}");
 
+public class YouDoNotHaveTheAuthorityToDo(UserId idFromToken, UserId idFromUser) : BankException(idFromToken, $"You do not have the authority to do. Your id:{idFromToken} | Id what u want to change: {idFromUser}");
+
 public class BankUnknownException(BankId id, Exception innerException)
     : BankException(id, $"Unknown exception for the Bank under id: {id}", innerException);

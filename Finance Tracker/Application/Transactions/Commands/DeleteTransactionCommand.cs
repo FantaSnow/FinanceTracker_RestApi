@@ -10,6 +10,7 @@ namespace Application.Transactions.Commands;
 public record DeleteTransactionCommand : IRequest<Result<Transaction, TransactionException>>
 {
     public required Guid TransactionId { get; init; }
+    public required Guid UserIdFromToken { get; init; }
 }
 
 public class DeleteTransactionCommandHandler(
@@ -22,29 +23,49 @@ public class DeleteTransactionCommandHandler(
     {
         var transactionId = new TransactionId(request.TransactionId);
         var existingTransaction = await transactionRepository.GetById(transactionId, cancellationToken);
+
         return await existingTransaction.Match<Task<Result<Transaction, TransactionException>>>(
             async t =>
             {
-                var existingUser = await userRepository.GetById(t.UserId, cancellationToken);
+                var userFromTransactionId = t.UserId;
+                var existingUserFromTransaction = await userRepository.GetById(userFromTransactionId, cancellationToken);
 
-                return await existingUser.Match<Task<Result<Transaction, TransactionException>>>(
-                    async u => await DeleteEntity(t, u, cancellationToken),
-                    () => Task.FromResult<Result<Transaction, TransactionException>>(
-                        new UserNotFoundException(t.UserId)));
+                return await existingUserFromTransaction.Match(
+                    async userFromTransaction =>
+                    {
+                        var userIdFromToken = new UserId(request.UserIdFromToken);
+                        var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
+
+                        return await existingUserFromToken.Match<Task<Result<Transaction, TransactionException>>>(
+                            async userFromToken => await DeleteEntity(userFromTransaction, userFromToken, t, cancellationToken),
+                            () => Task.FromResult<Result<Transaction, TransactionException>>(new UserNotFoundException(userIdFromToken))
+                        );
+                    },
+                    () => Task.FromResult<Result<Transaction, TransactionException>>(new UserNotFoundException(userFromTransactionId))
+                );
             },
-            () => Task.FromResult<Result<Transaction, TransactionException>>(
-                new TransactionNotFoundException(transactionId)));
+            () => Task.FromResult<Result<Transaction, TransactionException>>(new TransactionNotFoundException(transactionId))
+        );
     }
 
-    private async Task<Result<Transaction, TransactionException>> DeleteEntity(Transaction transaction, User user,
+    private async Task<Result<Transaction, TransactionException>> DeleteEntity(
+        User userFromTransaction,
+        User userFromToken,
+        Transaction transaction,
         CancellationToken cancellationToken)
     {
         try
         {
-            user.AddToBalance(transaction.Sum);
-            await userRepository.Update(user, cancellationToken);
-            var afterDeleateTransaction = await transactionRepository.Delete(transaction, cancellationToken);
-            return afterDeleateTransaction;
+            if (userFromToken.Id == userFromTransaction.Id || userFromToken.IsAdmin)
+            {
+                userFromTransaction.AddToBalance(transaction.Sum);
+                await userRepository.Update(userFromTransaction, cancellationToken);
+                return await transactionRepository.Delete(transaction, cancellationToken);
+            }
+
+            return await Task.FromResult<Result<Transaction, TransactionException>>(
+                new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, userFromTransaction.Id)
+            );
         }
         catch (Exception exception)
         {

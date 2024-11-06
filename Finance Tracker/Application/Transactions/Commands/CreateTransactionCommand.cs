@@ -13,6 +13,7 @@ public record CreateTransactionCommand : IRequest<Result<Transaction, Transactio
     public required decimal Sum { get; init; }
     public required Guid CategoryId { get; init; }
     public required Guid UserId { get; init; }
+    public required Guid UserIdFromToken { get; init; }
 }
 
 public class CreateTransactionCommandHandler(
@@ -25,17 +26,27 @@ public class CreateTransactionCommandHandler(
         CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
-        var existingUser = await userRepository.GetById(userId, cancellationToken);
+        var existingUserForTransaction = await userRepository.GetById(userId, cancellationToken);
 
-        return await existingUser.Match(
-            async u =>
+        return await existingUserForTransaction.Match(
+            async userForTransaction =>
             {
-                var categoryId = new CategoryId(request.CategoryId);
-                var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
-                return await existingCategory.Match(
-                    async c => await CreateEntity(request.Sum, categoryId, u, cancellationToken),
+                var userIdFromToken = new UserId(request.UserIdFromToken);
+                var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
+
+                return await existingUserFromToken.Match(
+                    async userFromToken =>
+                    {
+                        var categoryId = new CategoryId(request.CategoryId);
+                        var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
+
+                        return await existingCategory.Match(
+                            async category => await CreateEntity(request.Sum, categoryId, userForTransaction, userFromToken, cancellationToken),
+                            () => Task.FromResult<Result<Transaction, TransactionException>>(
+                                new CategoryNotFoundException(categoryId)));
+                    },
                     () => Task.FromResult<Result<Transaction, TransactionException>>(
-                        new CategoryNotFoundException(categoryId)));
+                        new UserNotFoundException(userIdFromToken)));
             },
             () => Task.FromResult<Result<Transaction, TransactionException>>(new UserNotFoundException(userId)));
     }
@@ -43,15 +54,22 @@ public class CreateTransactionCommandHandler(
     private async Task<Result<Transaction, TransactionException>> CreateEntity(
         decimal sum,
         CategoryId categoryId,
-        User user,
+        User userForTransaction,
+        User userFromToken,
         CancellationToken cancellationToken)
     {
         try
         {
-            var entity = Transaction.Create(TransactionId.New(), sum, user.Id, categoryId);
-            user.AddToBalance(sum);
-            await userRepository.Update(user, cancellationToken);
-            return await transactionRepository.Add(entity, cancellationToken);
+            if (userFromToken.Id == userForTransaction.Id || userFromToken.IsAdmin)
+            {
+                var entity = Transaction.Create(TransactionId.New(), sum, userForTransaction.Id, categoryId);
+                userForTransaction.AddToBalance(sum);
+                await userRepository.Update(userForTransaction, cancellationToken);
+                return await transactionRepository.Add(entity, cancellationToken);
+            }
+
+            return await Task.FromResult<Result<Transaction, TransactionException>>(
+                new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, userForTransaction.Id));
         }
         catch (Exception exception)
         {

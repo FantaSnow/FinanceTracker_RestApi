@@ -18,12 +18,16 @@ public class StatisticController(ISender sender) : ControllerBase
         [FromRoute] Guid categoryId,
         CancellationToken cancellationToken)
     {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userIdFromToken = new Guid(userIdClaim!.Value);
+        
         var input = new GetByTimeAndCategoryCommand
         {
             StartDate = startDate,
             EndDate = endDate,
             CategoryId = categoryId,
-            UserId = userId
+            UserId = userId,
+            UserIdFromToken=userIdFromToken
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -39,11 +43,15 @@ public class StatisticController(ISender sender) : ControllerBase
         [FromRoute] Guid userId, [FromRoute] DateTime startDate, [FromRoute] DateTime endDate,
         CancellationToken cancellationToken)
     {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userIdFromToken = new Guid(userIdClaim!.Value);
+        
         var input = new GetByTimeForCategoryCommand
         {
             StartDate = startDate,
             EndDate = endDate,
-            UserId = userId
+            UserId = userId,
+            UserIdFromToken= userIdFromToken
         };
 
         var result = await sender.Send(input, cancellationToken);

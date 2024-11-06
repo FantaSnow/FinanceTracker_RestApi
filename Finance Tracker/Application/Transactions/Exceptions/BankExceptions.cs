@@ -28,7 +28,7 @@ public abstract class TransactionException : Exception
         CategoryId = categoryId;
     }
 }
-
+public class YouDoNotHaveTheAuthorityToDo(UserId idFromToken, UserId idFromUser) : TransactionException(idFromToken, $"You do not have the authority to do. Your id:{idFromToken} | Id what u want to change: {idFromUser}");
 public class TransactionNotFoundException(TransactionId id)
     : TransactionException(id, $"Transaction under id: {id} not found");
 

@@ -14,6 +14,7 @@ public static class StatisticErrorHandler
                 UserNotFoundException => StatusCodes.Status404NotFound,
                 CategoryNotFoundException => StatusCodes.Status404NotFound,
                 StatisticUnknownException => StatusCodes.Status500InternalServerError,
+                YouDoNotHaveTheAuthorityToDo => StatusCodes.Status403Forbidden,
                 _ => throw new NotImplementedException("Statistic error handler does not implemented")
             }
         };

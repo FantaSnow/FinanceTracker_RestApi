@@ -11,7 +11,7 @@ public record TransactionDto(
     DateTime CreatedAt,
     Guid UserId,
     UserDto? User,
-    string CategoryName)
+    string? CategoryName)
 {
     public static TransactionDto FromDomainModel(Transaction transaction)
         => new(
@@ -20,6 +20,6 @@ public record TransactionDto(
             Sum: transaction.Sum,
             UserId: transaction.UserId.Value,
             User: transaction.User == null ? null : UserDto.FromDomainModel(transaction.User),
-            CategoryName: transaction.Category!.Name 
+            CategoryName: transaction.Category!.Name
         );
 }

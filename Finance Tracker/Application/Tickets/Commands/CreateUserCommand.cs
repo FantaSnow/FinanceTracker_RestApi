@@ -21,7 +21,7 @@ public record CreateTokenCommand : IRequest<Result<string, TokenException>>
 public class CreateTokenCommandHandler(IUserRepository userRepository, IConfiguration configuration)
     : IRequestHandler<CreateTokenCommand, Result<string, TokenException>>
 {
-    private IConfiguration Config { get; } = configuration;
+    private IConfiguration Config { get; } = configuration; 
 
     private const string TokenSecret = "ForTheLoveOfGodStoreAndLoadThisSecurely";
     private static readonly TimeSpan TokenLifetime = TimeSpan.FromHours(8);

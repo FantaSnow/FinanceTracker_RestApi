@@ -49,11 +49,15 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
     public async Task<ActionResult<BankDto>> Create([FromRoute] Guid userId, [FromBody] BankCreateDto request,
         CancellationToken cancellationToken)
     {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userIdFromToken = new Guid(userIdClaim!.Value);
+        
         var input = new CreateBankCommand
         {
             Name = request.Name,
             BalanceGoal = request.BalanceGoal,
-            UserId = userId
+            UserId = userId,
+            UserIdFromToken = userIdFromToken
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -70,10 +74,14 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
         [FromRoute] decimal balanceToAdd,
         CancellationToken cancellationToken)
     {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userId = new Guid(userIdClaim!.Value);
+        
         var input = new AddBankBalanceCommand
         {
             BankId = bankId,
-            BalanceToAdd = balanceToAdd
+            BalanceToAdd = balanceToAdd,
+            UserIdFromToken = userId
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -87,9 +95,13 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
     [HttpDelete("delete/{bankId:guid}")]
     public async Task<ActionResult<BankDto>> Delete([FromRoute] Guid bankId, CancellationToken cancellationToken)
     {
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userId = new Guid(userIdClaim!.Value);
+        
         var input = new DeleteBankCommand
         {
-            BankId = bankId
+            BankId = bankId,
+            UserIdFromToken = userId
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -106,11 +118,16 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
         [FromBody] BankUpdateDto request,
         CancellationToken cancellationToken)
     {
+        
+        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+        var userIdFromToken = new Guid(userIdClaim!.Value);
+
         var input = new UpdateBankCommand
         {
             BankId = bankId,
             Name = request.Name,
-            BalanceGoal = request.BalanceGoal
+            BalanceGoal = request.BalanceGoal,
+            UserIdFromToken = userIdFromToken
         };
 
         var result = await sender.Send(input, cancellationToken);

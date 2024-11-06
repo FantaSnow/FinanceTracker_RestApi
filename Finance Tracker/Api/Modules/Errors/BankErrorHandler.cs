@@ -16,6 +16,7 @@ public static class BankErrorHandler
                 BankAlreadyExistsException => StatusCodes.Status409Conflict,
                 BankUnknownException => StatusCodes.Status500InternalServerError,
                 UserNotFoundException => StatusCodes.Status404NotFound,
+                YouDoNotHaveTheAuthorityToDo => StatusCodes.Status403Forbidden,
                 _ => throw new NotImplementedException("Bank error handler does not implemented")
             }
         };
