@@ -64,6 +64,10 @@ public class UpdateTransactionCommandHandler(ITransactionRepository transactionR
         {
             if (userFromToken.Id == userFromTransaction.Id || userFromToken.IsAdmin)
             {
+                userFromTransaction.AddToBalance(-transaction.Sum);
+                userFromTransaction.AddToBalance(sum);
+                await userRepository.Update(userFromTransaction, cancellationToken);
+
                 transaction.UpdateDatails(sum, categoryId);
                 return await transactionRepository.Update(transaction, cancellationToken);
             }

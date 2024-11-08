@@ -74,4 +74,12 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
 
         return entity == null ? Option.None<Bank>() : Option.Some(entity);
     }
+    public async Task<Option<Bank>> GetByNameAndUser(string name, UserId userId,BankId bankId, CancellationToken cancellationToken)
+    {
+        var entity = await context.Banks
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Name == name && x.UserId == userId && x.Id != bankId, cancellationToken);
+
+        return entity == null ? Option.None<Bank>() : Option.Some(entity);
+    }
 }

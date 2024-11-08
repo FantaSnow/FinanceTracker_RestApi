@@ -58,7 +58,7 @@ public class UpdateBankCommandHandler(IBankRepository bankRepository, IUserRepos
     {
         try
         {
-            var existingBank = await bankRepository.GetByNameAndUser(name, userFromBank.Id, cancellationToken);
+            var existingBank = await bankRepository.GetByNameAndUser(name, userFromBank.Id, bank.Id, cancellationToken);
             
             return await existingBank.Match(
                 c => Task.FromResult<Result<Bank, BankException>>(new BankAlreadyExistsException(c.Id)),

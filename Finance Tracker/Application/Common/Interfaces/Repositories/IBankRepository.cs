@@ -11,4 +11,6 @@ public interface IBankRepository
     Task<Bank> Delete(Bank bank, CancellationToken cancellationToken);
     Task<Option<Bank>> GetById(BankId id, CancellationToken cancellationToken);
     Task<Option<Bank>> GetByNameAndUser(string name, UserId userId, CancellationToken cancellationToken);
+    Task<Option<Bank>> GetByNameAndUser(string name, UserId userId,BankId bankId, CancellationToken cancellationToken);
+
 }

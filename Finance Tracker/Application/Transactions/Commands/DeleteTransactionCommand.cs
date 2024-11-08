@@ -58,7 +58,7 @@ public class DeleteTransactionCommandHandler(
         {
             if (userFromToken.Id == userFromTransaction.Id || userFromToken.IsAdmin)
             {
-                userFromTransaction.AddToBalance(transaction.Sum);
+                userFromTransaction.AddToBalance(-transaction.Sum);
                 await userRepository.Update(userFromTransaction, cancellationToken);
                 return await transactionRepository.Delete(transaction, cancellationToken);
             }
