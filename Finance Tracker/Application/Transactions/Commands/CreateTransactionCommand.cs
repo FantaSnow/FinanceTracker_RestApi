@@ -28,19 +28,19 @@ public class CreateTransactionCommandHandler(
         var userId = new UserId(request.UserId);
         var existingUserForTransaction = await userRepository.GetById(userId, cancellationToken);
 
-        return await existingUserForTransaction.Match(
+        return await existingUserForTransaction.Match<Task<Result<Transaction, TransactionException>>>(
             async userForTransaction =>
             {
                 var userIdFromToken = new UserId(request.UserIdFromToken);
                 var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
 
-                return await existingUserFromToken.Match(
+                return await existingUserFromToken.Match<Task<Result<Transaction, TransactionException>>>(
                     async userFromToken =>
                     {
                         var categoryId = new CategoryId(request.CategoryId);
                         var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
 
-                        return await existingCategory.Match(
+                        return await existingCategory.Match<Task<Result<Transaction, TransactionException>>>(
                             async category => await CreateEntity(request.Sum, categoryId, userForTransaction, userFromToken, cancellationToken),
                             () => Task.FromResult<Result<Transaction, TransactionException>>(
                                 new CategoryNotFoundException(categoryId)));

@@ -24,7 +24,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
 
         return entities.Select(CategoryDto.FromDomainModel).ToList();
     }
-    
+
     [AllowAnonymous]
     [HttpGet("getById/{categoryId:guid}")]
     public async Task<ActionResult<CategoryDto>> Get([FromRoute] Guid categoryId, CancellationToken cancellationToken)
@@ -44,7 +44,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
     {
         var input = new CreateCategoryCommand
         {
-            Name = request.Name
+            Name = request.Name,
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -62,7 +62,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
     {
         var input = new DeleteCategoryCommand
         {
-            CategoryId = categoryId
+            CategoryId = categoryId,
         };
 
         var result = await sender.Send(input, cancellationToken);
@@ -83,7 +83,7 @@ public class CategoryController(ISender sender, ICategoryQueries categoryQueries
         var input = new UpdateCategoryCommand
         {
             Name = request.Name,
-            CategoryId = categoryId
+            CategoryId = categoryId,
         };
 
         var result = await sender.Send(input, cancellationToken);

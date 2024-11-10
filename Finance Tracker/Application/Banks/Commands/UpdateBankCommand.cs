@@ -12,7 +12,7 @@ public record UpdateBankCommand : IRequest<Result<Bank, BankException>>
     public required Guid BankId { get; init; }
     public required string Name { get; init; }
     public required decimal BalanceGoal { get; init; }
-    public required Guid UserIdFromToken { get; set; }
+    public required Guid UserIdFromToken { get; init; }
 }
 
 public class UpdateBankCommandHandler(IBankRepository bankRepository, IUserRepository userRepository)
@@ -24,19 +24,19 @@ public class UpdateBankCommandHandler(IBankRepository bankRepository, IUserRepos
         var bankId = new BankId(request.BankId);
         var existingBank = await bankRepository.GetById(bankId, cancellationToken);
 
-        return await existingBank.Match(
+        return await existingBank.Match<Task<Result<Bank, BankException>>>(
             async b =>
             {
                 var userFromBankId = b.UserId;
                 var existingUserFromBank = await userRepository.GetById(userFromBankId, cancellationToken);
                 
-                return await existingUserFromBank.Match(
+                return await existingUserFromBank.Match<Task<Result<Bank, BankException>>>(
                     async ufb =>
                     {
                         var userIdFromToken = new UserId(request.UserIdFromToken);
 
                         var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
-                        return await existingUserFromToken.Match(
+                        return await existingUserFromToken.Match<Task<Result<Bank, BankException>>>(
                             async uft =>
                             {   
                                 return await UpdateEntity(b,ufb,uft,request.Name, request.BalanceGoal, cancellationToken);

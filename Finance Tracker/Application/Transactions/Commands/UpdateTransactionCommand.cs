@@ -25,19 +25,19 @@ public class UpdateTransactionCommandHandler(ITransactionRepository transactionR
         var transactionId = new TransactionId(request.TransactionId);
         var existingTransaction = await transactionRepository.GetById(transactionId, cancellationToken);
 
-        return await existingTransaction.Match(
+        return await existingTransaction.Match<Task<Result<Transaction, TransactionException>>>(
             async t =>
             {
                 var userFromTransactionId = t.UserId;
                 var existingUserFromTransaction = await userRepository.GetById(userFromTransactionId, cancellationToken);
 
-                return await existingUserFromTransaction.Match(
+                return await existingUserFromTransaction.Match<Task<Result<Transaction, TransactionException>>>(
                     async uft =>
                     {
                         var userIdFromToken = new UserId(request.UserIdFromToken);
                         var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
 
-                        return await existingUserFromToken.Match(
+                        return await existingUserFromToken.Match<Task<Result<Transaction, TransactionException>>>(
                             async userFromToken =>
                             {
                                 return await UpdateEntity(t, uft, userFromToken, request.Sum, new CategoryId(request.CategoryId), cancellationToken);

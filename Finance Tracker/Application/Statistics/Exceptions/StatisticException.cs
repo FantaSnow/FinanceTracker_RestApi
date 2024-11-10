@@ -8,10 +8,10 @@ public abstract class StatisticException : Exception
     public CategoryId? CategoryId { get; }
     public UserId? UserId { get; }
 
-    protected StatisticException(CategoryId? bankId, string message, Exception? innerException = null)
+    protected StatisticException(CategoryId? categoryId, string message, Exception? innerException = null)
         : base(message, innerException)
     {
-        CategoryId = bankId;
+        CategoryId = categoryId;
     }
 
     protected StatisticException(UserId? userId, string message, Exception? innerException = null)

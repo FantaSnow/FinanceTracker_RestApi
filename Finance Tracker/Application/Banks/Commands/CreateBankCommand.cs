@@ -24,18 +24,15 @@ public class CreateBankCommandHandler(IBankRepository bankRepository, IUserRepos
         var userForBankId = new UserId(request.UserId);
         var existingUserFromBank = await userRepository.GetById(userForBankId, cancellationToken);
 
-        return await existingUserFromBank.Match(
+        return await existingUserFromBank.Match<Task<Result<Bank, BankException>>>(
             async ufb =>
             {
                 var userIdFromToken = new UserId(request.UserIdFromToken);
                 var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
 
-                return await existingUserFromToken.Match(
-                    async uft =>
-                    {
-                        return await CreateEntity(request.Name, request.BalanceGoal, ufb, uft,
-                            cancellationToken);
-                    },
+                return await existingUserFromToken.Match<Task<Result<Bank, BankException>>>(
+                    async uft => await CreateEntity(request.Name, request.BalanceGoal, ufb, uft,
+                        cancellationToken),
                     () => Task.FromResult<Result<Bank, BankException>>(
                         new UserNotFoundException(userIdFromToken)));
             },

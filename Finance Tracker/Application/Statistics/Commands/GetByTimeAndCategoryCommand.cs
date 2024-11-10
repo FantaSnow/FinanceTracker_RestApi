@@ -31,19 +31,19 @@ public class GetByTimeAndCategoryCommandHandler(
         var userId = new UserId(request.UserId);
         var existingUserForStatistic = await userRepository.GetById(userId, cancellationToken);
 
-        return await existingUserForStatistic.Match(
+        return await existingUserForStatistic.Match<Task<Result<Statistic, StatisticException>>>(
             async ufs =>
             {
                 var userIdFromToken = new UserId(request.UserIdFromToken);
                 var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
 
-                return await existingUserFromToken.Match(
+                return await existingUserFromToken.Match<Task<Result<Statistic, StatisticException>>>(
                     async uft =>
                     {
                         var categoryId = new CategoryId(request.CategoryId);
                         var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
 
-                        return await existingCategory.Match(
+                        return await existingCategory.Match<Task<Result<Statistic, StatisticException>>>(
                             async c => await CreateEntity(request.StartDate, request.EndDate, c,ufs,uft, cancellationToken),
                             () => Task.FromResult<Result<Statistic, StatisticException>>(
                                 new CategoryNotFoundException(categoryId))

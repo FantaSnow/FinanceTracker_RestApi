@@ -28,13 +28,13 @@ public class GetByTimeForCategoryCommandHandler(
         var userId = new UserId(request.UserId);
         var existingUserForStatistic = await userRepository.GetById(userId, cancellationToken);
 
-        return await existingUserForStatistic.Match(
+        return await existingUserForStatistic.Match<Task<Result<List<StatisticCategory>, StatisticException>>>(
             async ufs =>
             {
                 var userIdFromToken = new UserId(request.UserIdFromToken);
                 var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
 
-                return await existingUserFromToken.Match(
+                return await existingUserFromToken.Match<Task<Result<List<StatisticCategory>, StatisticException>>>(
                     async uft =>
                     {
                         return  await CreateEntity(request.StartDate, request.EndDate, ufs,uft, cancellationToken);
@@ -79,7 +79,9 @@ public class GetByTimeForCategoryCommandHandler(
                 return statistics;
             }
 
-            return new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, userForStatistics.Id);
+            return await Task.FromResult<Result<List<StatisticCategory>, StatisticException>>(
+                new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, userForStatistics.Id)
+            );            
         }
         catch (Exception exception)
         {

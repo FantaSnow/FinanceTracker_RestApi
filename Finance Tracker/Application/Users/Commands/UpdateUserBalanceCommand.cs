@@ -10,37 +10,54 @@ public record UpdateUserBalanceCommand : IRequest<Result<User, UserException>>
 {
     public required Guid UserId { get; init; }
     public required decimal Balance { get; init; }
+    public required Guid UserIdFromToken { get; init; }
+
 }
 
 public class UpdateUserBalanceCommandHandler(IUserRepository userRepository)
-    : IRequestHandler<UpdateUserCommand, Result<User, UserException>>
+    : IRequestHandler<UpdateUserBalanceCommand, Result<User, UserException>>
 {
-    public async Task<Result<User, UserException>> Handle(UpdateUserCommand request,
+    public async Task<Result<User, UserException>> Handle(UpdateUserBalanceCommand request,
         CancellationToken cancellationToken)
     {
         var userId = new UserId(request.UserId);
-
         var existingUser = await userRepository.GetById(userId, cancellationToken);
 
-        return await existingUser.Match(
-            async u => await UpdateEntity(u, request.Balance, cancellationToken),
+        return await existingUser.Match<Task<Result<User, UserException>>>(
+            async u =>
+            {
+                var userIdFromToken = new UserId(request.UserIdFromToken);
+                var existingUserFromToken = await userRepository.GetById(userIdFromToken, cancellationToken);
+
+                return await existingUserFromToken.Match<Task<Result<User, UserException>>>(
+                    async userFromToken => await UpdateEntity(u, userFromToken, request.Balance, cancellationToken),
+                    () => Task.FromResult<Result<User, UserException>>(new UserNotFoundException(userIdFromToken))
+                );   
+            },
             () => Task.FromResult<Result<User, UserException>>(new UserNotFoundException(userId)));
     }
 
     private async Task<Result<User, UserException>> UpdateEntity(
-        User entity,
+        User user,
+        User userFromToken,
         decimal balance,
         CancellationToken cancellationToken)
     {
         try
         {
-            entity.AddToBalance(balance);
+            if (userFromToken.Id == user.Id || userFromToken.IsAdmin)
+            {
+                user.AddToBalance(balance);
+                return await userRepository.Update(user, cancellationToken);
+            }
 
-            return await userRepository.Update(entity, cancellationToken);
+            return await Task.FromResult<Result<User, UserException>>(
+                new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, user.Id)
+            );
         }
         catch (Exception exception)
         {
-            return new UserUnknownException(entity.Id, exception);
+            return new UserUnknownException(user.Id, exception);
         }
     }
 }

@@ -25,7 +25,15 @@ public class UpdateUserCommandHandler(IUserRepository userRepository)
         var existingUser = await userRepository.GetById(userId, cancellationToken);
 
         return await existingUser.Match(
-            async u => await UpdateEntity(u, request.Login, request.Password, request.Balance, cancellationToken),
+            async u =>
+            {
+                var existingUserForDublicate = await userRepository.GetByLogin(request.Login, cancellationToken);
+
+                return await existingUserForDublicate.Match<Task<Result<User, UserException>>>(
+                    d => Task.FromResult<Result<User, UserException>>(new UserAlreadyExistsException(d.Id)),
+                    async () => await UpdateEntity(u, request.Login, request.Password, request.Balance,
+                        cancellationToken));
+            },
             () => Task.FromResult<Result<User, UserException>>(new UserNotFoundException(userId)));
     }
 

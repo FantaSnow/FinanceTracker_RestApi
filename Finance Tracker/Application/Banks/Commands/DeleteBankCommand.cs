@@ -11,7 +11,7 @@ namespace Application.Banks.Commands;
 public record DeleteBankCommand : IRequest<Result<Bank, BankException>>
 {
     public required Guid BankId { get; init; }
-    public required Guid UserIdFromToken { get; set; }
+    public required Guid UserIdFromToken { get; init; }
 }
 
 public class DeleteBankCommandHandler(IBankRepository bankRepository, IUserRepository userRepository)
@@ -29,7 +29,7 @@ public class DeleteBankCommandHandler(IBankRepository bankRepository, IUserRepos
                 var userFromBankId = b.UserId;
                 var existingUserFromBank = await userRepository.GetById(userFromBankId, cancellationToken);
 
-                return await existingUserFromBank.Match(
+                return await existingUserFromBank.Match<Task<Result<Bank, BankException>>>(
                     async ufb =>
                     {
                         var userIdFromToken = new UserId(request.UserIdFromToken);

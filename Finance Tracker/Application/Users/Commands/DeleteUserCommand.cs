@@ -9,6 +9,7 @@ namespace Application.Users.Commands;
 public record DeleteUserCommand : IRequest<Result<User, UserException>>
 {
     public required Guid UserId { get; init; }
+    
 }
 
 public class DeleteUserCommandHandler(IUserRepository userRepository)

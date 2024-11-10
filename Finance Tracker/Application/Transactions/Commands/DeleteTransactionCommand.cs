@@ -30,7 +30,7 @@ public class DeleteTransactionCommandHandler(
                 var userFromTransactionId = t.UserId;
                 var existingUserFromTransaction = await userRepository.GetById(userFromTransactionId, cancellationToken);
 
-                return await existingUserFromTransaction.Match(
+                return await existingUserFromTransaction.Match<Task<Result<Transaction, TransactionException>>>(
                     async userFromTransaction =>
                     {
                         var userIdFromToken = new UserId(request.UserIdFromToken);

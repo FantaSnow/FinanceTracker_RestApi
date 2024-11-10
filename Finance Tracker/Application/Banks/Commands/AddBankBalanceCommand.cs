@@ -23,13 +23,13 @@ public class AddBankBalanceCommandHandler(IBankRepository bankRepository, IUserR
         var bankId = new BankId(request.BankId);
         var existingBank = await bankRepository.GetById(bankId, cancellationToken);
 
-        return await existingBank.Match(
+        return await existingBank.Match<Task<Result<Bank, BankException>>>(
             async b =>
             {
                 var userFromBankId = b.UserId;
                 var existingUserFromBank = await userRepository.GetById(userFromBankId, cancellationToken);
 
-                return await existingUserFromBank.Match(
+                return await existingUserFromBank.Match<Task<Result<Bank, BankException>>>(
                     async ufb =>
                     {
                         var userIdFromToken = new UserId(request.UserIdFromToken);

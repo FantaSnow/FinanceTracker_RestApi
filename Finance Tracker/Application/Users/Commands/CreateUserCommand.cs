@@ -20,7 +20,7 @@ public class CreateUserCommandHandler(IUserRepository userRepository)
     {
         var existingUser = await userRepository.GetByLogin(request.Login, cancellationToken);
 
-        return await existingUser.Match(
+        return await existingUser.Match<Task<Result<User, UserException>>>(
             u => Task.FromResult<Result<User, UserException>>(new UserAlreadyExistsException(u.Id)),
             async () => await CreateEntity(request.Login, request.Password, cancellationToken));
     }

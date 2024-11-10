@@ -15,6 +15,8 @@ public static class CategoryErrorHandler
                 CategoryNotFoundException => StatusCodes.Status404NotFound,
                 CategoryAlreadyExistsException => StatusCodes.Status409Conflict,
                 CategoryUnknownException => StatusCodes.Status500InternalServerError,
+                UserNotFoundException => StatusCodes.Status404NotFound,
+                YouDoNotHaveTheAuthorityToDo => StatusCodes.Status403Forbidden,
                 _ => throw new NotImplementedException("Category error handler does not implemented")
             }
         };
