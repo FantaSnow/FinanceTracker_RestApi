@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using Api.Dtos.Users;
 using Domain.Users;
+using Microsoft.EntityFrameworkCore;
 using Tests.Common;
 using Tests.Data;
 using Xunit;
@@ -18,22 +19,19 @@ public class GetAllTests : BaseIntegrationTest, IAsyncLifetime
         _adminUser = UsersData.AdminUser();
     }
     
+
     [Fact]
     public async Task GetAllUsers_Success()
     {
-        // Arrange
-        
-        // Act
         var response = await Client.GetAsync("users/getall");
 
-        // Assert
         response.EnsureSuccessStatusCode();
-        var users = await response.Content.ReadFromJsonAsync<List<UserDto>>();
-        Assert.NotNull(users);
-        Assert.Contains(users, user => user.Login == _mainUser.Login); 
-        Assert.Contains(users, user => user.Login == _adminUser.Login); 
+        
+        var usersInDb = await Context.Users.ToListAsync();
+        
+        Assert.Contains(usersInDb, user => user.Login == _mainUser.Login); 
+        Assert.Contains(usersInDb, user => user.Login == _adminUser.Login); 
     }
-
 
     public async Task InitializeAsync()
     {

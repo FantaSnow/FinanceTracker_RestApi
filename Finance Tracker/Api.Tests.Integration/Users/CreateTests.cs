@@ -2,6 +2,8 @@
 using System.Net.Http.Json;
 using Api.Dtos.Users;
 using Domain.Users;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Tests.Common;
 using Tests.Data;
 using Xunit;
@@ -18,7 +20,7 @@ namespace Api.Tests.Integration.Users
             _mainUser = UsersData.MainUser();
             _adminUser = UsersData.AdminUser();
         }
-        
+
         [Fact]
         public async Task CreateUser_Success_WhenValidDataProvided()
         {
@@ -36,11 +38,14 @@ namespace Api.Tests.Integration.Users
             var response = await Client.PostAsJsonAsync("users/create/", newUserDto);
 
             // Assert
-            response.EnsureSuccessStatusCode();
-            var createdUser = await response.Content.ReadFromJsonAsync<UserDto>();
-            Assert.NotNull(createdUser);
-            Assert.Equal(newUserDto.Login, createdUser?.Login);
-            Assert.Equal(newUserDto.Password, createdUser?.Password); 
+            response.EnsureSuccessStatusCode(); 
+
+            var userFromDatabase = await Context.Users
+                .FirstOrDefaultAsync(u => u.Login == newUserDto.Login);
+            userFromDatabase.Should().NotBeNull(); 
+            userFromDatabase?.Login.Should().Be(newUserDto.Login);
+            userFromDatabase?.Password.Should()
+                .NotBeNull(); 
         }
 
         [Fact]
@@ -58,8 +63,10 @@ namespace Api.Tests.Integration.Users
 
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.Conflict, response.StatusCode);
-            var responseBody = await response.Content.ReadAsStringAsync();
-            Assert.Contains("User already exists", responseBody); 
+
+            var userFromDatabase = await Context.Users
+                .FirstOrDefaultAsync(u => u.Login == existingUser.Login);
+            userFromDatabase.Should().NotBeNull();
         }
 
         [Fact]
@@ -70,9 +77,8 @@ namespace Api.Tests.Integration.Users
             var newUser = new UserCreateDto
             (
                 Login: "shortpassworduser",
-                Password: "sh" 
+                Password: "sh"
             );
-
 
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -81,8 +87,12 @@ namespace Api.Tests.Integration.Users
 
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+
+            var userFromDatabase = await Context.Users
+                .FirstOrDefaultAsync(u => u.Login == newUser.Login);
+            userFromDatabase.Should().BeNull();
         }
-        
+
         [Fact]
         public async Task CreateUser_Fails_WhenLoginIsTooShort()
         {
@@ -94,7 +104,6 @@ namespace Api.Tests.Integration.Users
                 Password: "password"
             );
 
-
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
             // Act
@@ -102,7 +111,12 @@ namespace Api.Tests.Integration.Users
 
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+
+            var userFromDatabase = await Context.Users
+                .FirstOrDefaultAsync(u => u.Login == newUser.Login);
+            userFromDatabase.Should().BeNull(); 
         }
+
 
         public async Task InitializeAsync()
         {

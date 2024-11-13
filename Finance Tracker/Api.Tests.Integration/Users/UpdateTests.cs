@@ -21,7 +21,6 @@ namespace Api.Tests.Integration.Users
             _adminUser = UsersData.AdminUser();
         }
 
-
         [Fact]
         public async Task UpdateUser_Fails_WhenUserIsNotAuthorized()
         {
@@ -32,7 +31,6 @@ namespace Api.Tests.Integration.Users
                 Login: "updatedLogin",
                 Password: "newpassword123",
                 Balance: 10m
-
             );
 
             // Act
@@ -47,13 +45,12 @@ namespace Api.Tests.Integration.Users
         {
             // Arrange
             var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
-            var userId = _secondUser.Id; 
+            var userId = _secondUser.Id;
             var updateUserDto = new UserUpdateDto
             (
                 Login: "updatedLogin",
                 Password: "newpassword123",
                 Balance: 10m
-
             );
 
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
@@ -70,7 +67,7 @@ namespace Api.Tests.Integration.Users
         {
             // Arrange
             var authToken = await GenerateAuthTokenAsync(_adminUser.Login, _adminUser.Password);
-            var userId = _secondUser.Id; 
+            var userId = _secondUser.Id;
             var updateUserDto = new UserUpdateDto
             (
                 Login: "updatedLogin",
@@ -86,10 +83,10 @@ namespace Api.Tests.Integration.Users
             // Assert
             response.EnsureSuccessStatusCode();
             var updatedUser = await Context.Users.FindAsync(userId);
+            Assert.NotNull(updatedUser);
             Assert.Equal(updateUserDto.Login, updatedUser?.Login);
             Assert.Equal(updateUserDto.Password, updatedUser?.Password);
             Assert.Equal(updateUserDto.Balance, updatedUser?.Balance);
-
         }
 
         [Fact]
@@ -97,7 +94,7 @@ namespace Api.Tests.Integration.Users
         {
             // Arrange
             var authToken = await GenerateAuthTokenAsync(_adminUser.Login, _adminUser.Password);
-            var nonExistentUserId = Guid.NewGuid(); 
+            var nonExistentUserId = Guid.NewGuid();
             var updateUserDto = new UserUpdateDto
             (
                 Login: "updatedLogin",
@@ -112,7 +109,6 @@ namespace Api.Tests.Integration.Users
 
             // Assert
             Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
-            var responseBody = await response.Content.ReadAsStringAsync(); 
         }
 
         public async Task InitializeAsync()

@@ -1,7 +1,9 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Api.Dtos.Users;
 using Domain.Users;
+using FluentAssertions;
 using Tests.Common;
 using Tests.Data;
 using Xunit;
@@ -25,10 +27,11 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
     public async Task AddToBalance_Success_WhenUserIsAuthorized()
     {
         // Arrange
+        // Arrange
         var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
         var userId = _mainUser.Id;
         var newBalance = 100.00m;
-        var updateBalanceRequest = new UserUpdateBalanceDto ( Balance: newBalance );
+        var updateBalanceRequest = new UserUpdateBalanceDto(Balance: newBalance);
 
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -38,17 +41,17 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
         // Assert
         response.EnsureSuccessStatusCode();
         var updatedUser = await Context.Users.FindAsync(userId);
-        Assert.Equal(newBalance, updatedUser?.Balance);
+        updatedUser?.Balance.Should().Be(newBalance);
     }
     
     [Fact]
     public async Task AddToBalanceAnotherPeople_Success_WhenUserIsAuthorizedButNotAdmin()
     {
-        // Arrange
+// Arrange
         var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
         var userId = _secondUser.Id;
         var newBalance = 100.00m;
-        var updateBalanceRequest = new UserUpdateBalanceDto ( Balance: newBalance );
+        var updateBalanceRequest = new UserUpdateBalanceDto(Balance: newBalance);
 
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -56,7 +59,7 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
         var response = await Client.PutAsJsonAsync($"users/AddToBalance/{userId}", updateBalanceRequest);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Forbidden, response.StatusCode);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
 
     }
     
@@ -67,7 +70,7 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
         var authToken = await GenerateAuthTokenAsync(_adminUser.Login, _adminUser.Password);
         var userId = _secondUser.Id;
         var newBalance = 100.00m;
-        var updateBalanceRequest = new UserUpdateBalanceDto ( Balance: newBalance );
+        var updateBalanceRequest = new UserUpdateBalanceDto(Balance: newBalance);
 
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -77,7 +80,7 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
         // Assert
         response.EnsureSuccessStatusCode();
         var updatedUser = await Context.Users.FindAsync(userId);
-        Assert.Equal(newBalance, updatedUser?.Balance);
+        updatedUser?.Balance.Should().Be(newBalance);
     }
     
     [Fact]
@@ -92,7 +95,7 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
         var response = await Client.PutAsJsonAsync($"users/AddToBalance/{userId}", updateBalanceRequest);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
     
     [Fact]
@@ -110,7 +113,7 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
         var response = await Client.PutAsJsonAsync($"users/AddToBalance/{userId}", updateBalanceRequest);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
     
     [Fact]
@@ -118,7 +121,7 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
     {
         // Arrange
         var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
-        var nonExistentUserId = Guid.NewGuid(); 
+        var nonExistentUserId = Guid.NewGuid();
         var newBalance = 100.00m;
         var updateBalanceRequest = new UserUpdateBalanceDto(Balance: newBalance);
 
@@ -128,7 +131,7 @@ public class AddToBalance : BaseIntegrationTest, IAsyncLifetime
         var response = await Client.PutAsJsonAsync($"users/AddToBalance/{nonExistentUserId}", updateBalanceRequest);
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
 

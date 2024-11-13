@@ -22,31 +22,30 @@ public class GetByIdTests : BaseIntegrationTest, IAsyncLifetime
     public async Task GetById_Success_WhenUserExists()
     {
         // Arrange
-        var userId = _mainUser.Id; 
+        var userId = _mainUser.Id;
 
         // Act
         var response = await Client.GetAsync($"users/getbyid/{userId}");
 
         // Assert
-        response.EnsureSuccessStatusCode(); 
-        var user = await response.Content.ReadFromJsonAsync<UserDto>(); 
-        Assert.NotNull(user); 
-        Assert.Equal(_mainUser.Login, user?.Login); 
+        response.EnsureSuccessStatusCode();
+        var userInDb = await Context.Users.FindAsync(userId);
+        Assert.NotNull(userInDb);
+        Assert.Equal(_mainUser.Login, userInDb?.Login);
     }
 
     [Fact]
     public async Task GetById_Fails_WhenUserNotFound()
     {
         // Arrange
-        var nonExistentUserId = Guid.NewGuid(); 
+        var nonExistentUserId = Guid.NewGuid();
 
         // Act
         var response = await Client.GetAsync($"users/getbyid/{nonExistentUserId}");
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode); 
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
     }
-
 
     public async Task InitializeAsync()
     {

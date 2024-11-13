@@ -12,66 +12,18 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATask_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2024_002E2_003Fresharper_002Dhost_003FSourcesCache_003F2e49d132ea68ff47071c64476ae29138fa965dc555ef7c3f4991586431de241_003FTask_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATask_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2024_002E2_003Fresharper_002Dhost_003FSourcesCache_003F2e49d132ea68ff47071c64476ae29138fa965dc555ef7c3f4991586431de241_003FTask_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATransactionScope_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2024_002E2_003Fresharper_002Dhost_003FSourcesCache_003F3f11c3d591b9e8c134d66ba543e8e9bdce9821474a0796130ca9c1cb6f897_003FTransactionScope_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0a337d45_002D8bb2_002D4b2e_002Da52e_002D9876724cc0fe/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteUser_Fails_WhenNoAuthTokenProvided" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.DeleteTests.DeleteUser_Fails_WhenNoAuthTokenProvided&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0ff3e93a_002D8031_002D4bc3_002Daccb_002D1217a3eec826/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteUser_Fails_WhenUserNotFound" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.DeleteTests.DeleteUser_Fails_WhenUserNotFound&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=17ed91f4_002D596a_002D4870_002D9539_002D6b65bc0ce64f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteUser_Fails_WhenInvalidAuthTokenProvided" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.DeleteTests.DeleteUser_Fails_WhenInvalidAuthTokenProvided&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.GetBalanceByIdTests.GetBalanceById_Success_WhenUserExists&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=1f39bfdf_002Df03f_002D4ba8_002D8d15_002D4836788a9a69/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=09c6b033_002D76a5_002D4f1c_002Db9c1_002D249d4901f76f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=62e6bf40_002Dfe07_002D4e97_002Da180_002Da093a980264c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CreateUser_Success_WhenValidDataProvided" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.CreateTests&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.DeleteTests.DeleteUser_Success_WhenAdminIsAuthorized&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6811f0d2_002Dc1d2_002D461f_002Dbdc0_002Dcc403f296085/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetBalanceById_Fails_WhenUserNotFound" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.GetBalanceByIdTests.GetBalanceById_Fails_WhenUserNotFound&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.UpdateTests.UpdateUser_Fails_WhenUserNotFound&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.UpdateTests.UpdateUser_Success_WhenAdminUpdatesAnotherUser&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=80fef3ee_002D8a42_002D4709_002Daf0d_002D17697457fb51/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="UpdateUser_Fails_WhenUserIsNotAdmin" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.UpdateTests.UpdateUser_Fails_WhenUserIsNotAdmin&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=90c9ed12_002Dfdd9_002D40fa_002D83d6_002Df2a75bfc61a1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteUser_Fails_WhenUserIsNotAdmin" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.DeleteTests.DeleteUser_Fails_WhenUserIsNotAdmin&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a825a8fd_002Da1a0_002D4e4a_002Dbb57_002D74ab572415d4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ShouldGetUserByIdAnonymous" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.AddToBalance.AddToBalance_Success_WhenUserIsAuthorized&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.AddToBalance.AddToBalanceAnotherPeople_Success_WhenUserIsAuthorizedButNotAdmin&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.AddToBalance.AddToBalanceAnotherPeople_Success_WhenUserIsAuthorizedButAdmin&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.AddToBalance.AddToBalance_Fails_WhenInvalidAuthTokenProvided&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.AddToBalance.AddToBalance_Fails_WhenNoAuthTokenProvided&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.AddToBalance.AddToBalance_Fails_WhenUserNotFound&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.CreateTests.CreateUser_Fails_WhenLoginAlreadyExists&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.CreateTests.CreateUser_Fails_WhenPasswordIsTooShort&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.CreateTests.CreateUser_Fails_WhenLoginIsTooShort&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.CreateTests.CreateUser_Success_WhenValidDataProvided&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::982E0B36-A633-418C-8D97-F0D48E89B650::net8.0::Api.Tests.Integration.Users.GetAllTests.GetAllUsers_Success&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c7d19f48_002D644d_002D423d_002Db503_002D56a3bbe83aad/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Solution /&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ef301e06_002D3d9f_002D4ba4_002Da61c_002Dbb1e21909720/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Solution /&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	</wpf:ResourceDictionary>
