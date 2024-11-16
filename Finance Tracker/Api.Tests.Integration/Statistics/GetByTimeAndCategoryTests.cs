@@ -74,8 +74,8 @@ public class GetByTimeAndCategoryTests : BaseIntegrationTest, IAsyncLifetime
         // Arrange
         var startDate = DateTime.UtcNow.AddMonths(-1);
         var endDate = DateTime.UtcNow.AddMonths(1);
-        var categoryId = _category1.Id;
-        var targetUserId = _secondUser.Id; 
+        var categoryId = _category1.Id.Value;
+        var targetUserId = _secondUser.Id.Value; 
         var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 

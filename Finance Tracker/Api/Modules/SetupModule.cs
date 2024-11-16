@@ -35,7 +35,7 @@ public static class SetupModule
 
         services.AddAuthorization();
     }
-    
+
     public static void SetupServices(this IServiceCollection services)
     {
         services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
