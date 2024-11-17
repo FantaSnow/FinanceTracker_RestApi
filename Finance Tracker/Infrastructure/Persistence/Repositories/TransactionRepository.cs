@@ -51,7 +51,37 @@ public class TransactionRepository(ApplicationDbContext context) : ITransactionR
 
         return entity == null ? Option.None<Transaction>() : Option.Some(entity);
     }
+    
+    public async Task<IReadOnlyList<Transaction>> GetAllMinusByUserAndDate(UserId id, DateTime startDateTime, DateTime endDateTime, CancellationToken cancellationToken)
+    {
+        var entity = await context.Transactions
+            .Include(t => t.Category)
+            .AsNoTracking()
+            .Where(x => 
+                x.UserId == id && 
+                x.CreatedAt > startDateTime && 
+                x.CreatedAt < endDateTime && 
+                x.Sum < 0)
+            .ToListAsync(cancellationToken);
+        return entity;
 
+    }
+    
+    public async Task<IReadOnlyList<Transaction>> GetAllPlusByUserAndDate(UserId id, DateTime startDateTime, DateTime endDateTime, CancellationToken cancellationToken)
+    {
+        var entity = await context.Transactions
+            .Include(t => t.Category)
+            .AsNoTracking()
+            .Where(x => 
+                x.UserId == id && 
+                x.CreatedAt > startDateTime && 
+                x.CreatedAt < endDateTime && 
+                x.Sum > 0)
+            .ToListAsync(cancellationToken);
+        return entity;
+
+    }
+    
     public async Task<IReadOnlyList<Transaction>> GetAllByUser(UserId id, CancellationToken cancellationToken)
     {
         var entity = await context.Transactions

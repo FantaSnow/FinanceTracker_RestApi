@@ -38,9 +38,9 @@ public class GetForAllCategorysTests : BaseIntegrationTest, IAsyncLifetime
 public async Task GetForAllCategorys_Succeeds_ForAdmin_WhenAccessingOthersData()
 {
     // Arrange
-    var startDate = DateTime.UtcNow.AddMonths(-1);
-    var endDate = DateTime.UtcNow.AddMonths(1);
-    var userId = _secondUser.Id; 
+    var startDate = DateTime.UtcNow.AddMonths(-1).ToString("MM-dd-yyyy");
+    var endDate = DateTime.UtcNow.AddMonths(1).ToString("MM-dd-yyyy");
+    var userId = _secondUser.Id.Value; 
     var authToken = await GenerateAuthTokenAsync(_adminUser.Login, _adminUser.Password);
     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -57,9 +57,9 @@ public async Task GetForAllCategorys_Succeeds_ForAdmin_WhenAccessingOthersData()
 public async Task GetForAllCategorys_Fails_ForUser_WhenAccessingOthersData()
 {
     // Arrange
-    var startDate = DateTime.UtcNow.AddMonths(-1);
-    var endDate = DateTime.UtcNow.AddMonths(1);
-    var targetUserId = _secondUser.Id;
+    var startDate = DateTime.UtcNow.AddMonths(-1).ToString("MM-dd-yyyy");
+    var endDate = DateTime.UtcNow.AddMonths(1).ToString("MM-dd-yyyy");
+    var targetUserId = _secondUser.Id.Value;
     var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -74,9 +74,9 @@ public async Task GetForAllCategorys_Fails_ForUser_WhenAccessingOthersData()
 public async Task GetForAllCategorys_Succeeds_ForUser_WhenAccessingOwnData()
 {
     // Arrange
-    var startDate = DateTime.UtcNow.AddMonths(-1);
-    var endDate = DateTime.UtcNow.AddMonths(1);
-    var userId = _mainUser.Id;
+    var startDate = DateTime.UtcNow.AddMonths(-1).ToString("MM-dd-yyyy");
+    var endDate = DateTime.UtcNow.AddMonths(1).ToString("MM-dd-yyyy");
+    var userId = _mainUser.Id.Value;
     var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
     Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -93,9 +93,9 @@ public async Task GetForAllCategorys_Succeeds_ForUser_WhenAccessingOwnData()
 public async Task GetByTimeAndCategory_Fails_WhenUserNotAuthorized()
 {
     // Arrange
-    var startDate = DateTime.UtcNow.AddMonths(-1);
-    var endDate = DateTime.UtcNow.AddMonths(1);
-    var userId = _mainUser.Id;
+    var startDate = DateTime.UtcNow.AddMonths(-1).ToString("MM-dd-yyyy");
+    var endDate = DateTime.UtcNow.AddMonths(1).ToString("MM-dd-yyyy");
+    var userId = _mainUser.Id.Value;
 
     // Act
     var response = await Client.GetAsync($"statistics/getForAllCategorys/{startDate}/{endDate}/user=/{userId}");

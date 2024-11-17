@@ -23,12 +23,36 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
         return entities.Select(TransactionDto.FromDomainModel).ToList();
     }
 
+    
     [AllowAnonymous]
     [HttpGet("getAllByUser/{userId:guid}")]
     public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAllByUser([FromRoute] Guid userId,
         CancellationToken cancellationToken)
     {
         var entities = await transactionQueries.GetAllByUser(new UserId(userId), cancellationToken);
+
+        return entities.Select(TransactionDto.FromDomainModel).ToList();
+    }
+        
+    [AllowAnonymous]
+    [HttpGet("getAllPlusByUserAndDate/{startDate:datetime}/{endDate:datetime}/user=/{userId:guid}")]
+    public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAllPlusByUserAndDate(
+        [FromRoute] Guid userId, [FromRoute] DateTime startDate, [FromRoute] DateTime endDate,
+        CancellationToken cancellationToken)
+    {
+        var entities = await transactionQueries.GetAllPlusByUserAndDate(new UserId(userId),startDate, endDate,cancellationToken);
+
+        return entities.Select(TransactionDto.FromDomainModel).ToList();
+    }
+
+    
+    [AllowAnonymous]
+    [HttpGet("getAllMinusByUserAndDate/{startDate:datetime}/{endDate:datetime}/user=/{userId:guid}")]
+    public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAllMinusByUserAndDate(
+        [FromRoute] Guid userId, [FromRoute] DateTime startDate, [FromRoute] DateTime endDate,
+        CancellationToken cancellationToken)
+    {
+        var entities = await transactionQueries.GetAllMinusByUserAndDate(new UserId(userId),startDate, endDate,cancellationToken);
 
         return entities.Select(TransactionDto.FromDomainModel).ToList();
     }

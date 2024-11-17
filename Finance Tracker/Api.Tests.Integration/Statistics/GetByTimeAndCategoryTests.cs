@@ -40,10 +40,10 @@ public class GetByTimeAndCategoryTests : BaseIntegrationTest, IAsyncLifetime
     public async Task GetByTimeAndCategory_Fails_WhenUserNotAuthorized()
     {
         // Arrange
-        var startDate = DateTime.UtcNow.AddMonths(-1);
-        var endDate = DateTime.UtcNow.AddMonths(1);
-        var categoryId = _category1.Id;
-        var userId = _mainUser.Id;
+        var startDate = DateTime.UtcNow.AddMonths(-1).ToString("MM-dd-yyyy");
+        var endDate = DateTime.UtcNow.AddMonths(1).ToString("MM-dd-yyyy");
+        var categoryId = _category1.Id.Value;
+        var userId = _mainUser.Id.Value;
 
         // Act
         var response = await Client.GetAsync($"statistics/getByTimeAndCategory/{startDate}/{endDate}/{categoryId}/user=/{userId}");
@@ -54,10 +54,10 @@ public class GetByTimeAndCategoryTests : BaseIntegrationTest, IAsyncLifetime
     public async Task GetByTimeAndCategory_Succeeds_ForAdmin_WhenAccessingOthersData()
     {
         // Arrange
-        var startDate = DateTime.UtcNow.AddMonths(-1);
-        var endDate = DateTime.UtcNow.AddMonths(1);
-        var categoryId = _category1.Id;
-        var userId = _secondUser.Id; 
+        var startDate = DateTime.UtcNow.AddMonths(-1).ToString("MM-dd-yyyy");
+        var endDate = DateTime.UtcNow.AddMonths(1).ToString("MM-dd-yyyy");
+        var categoryId = _category1.Id.Value;
+        var userId = _secondUser.Id.Value; 
         var authToken = await GenerateAuthTokenAsync(_adminUser.Login, _adminUser.Password);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -72,10 +72,11 @@ public class GetByTimeAndCategoryTests : BaseIntegrationTest, IAsyncLifetime
     public async Task GetByTimeAndCategory_Fails_ForUser_WhenAccessingOthersData()
     {
         // Arrange
-        var startDate = DateTime.UtcNow.AddMonths(-1);
-        var endDate = DateTime.UtcNow.AddMonths(1);
+        var startDate = DateTime.UtcNow.AddMonths(-1).ToString("MM-dd-yyyy");
+        var endDate = DateTime.UtcNow.AddMonths(1).ToString("MM-dd-yyyy");
         var categoryId = _category1.Id.Value;
         var targetUserId = _secondUser.Id.Value; 
+        
         var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
@@ -90,10 +91,10 @@ public class GetByTimeAndCategoryTests : BaseIntegrationTest, IAsyncLifetime
     public async Task GetByTimeAndCategory_Succeeds_ForUser_WhenAccessingOwnData()
     {
         // Arrange
-        var startDate = DateTime.UtcNow.AddMonths(-1);
-        var endDate = DateTime.UtcNow.AddMonths(1);
-        var categoryId = _category1.Id;
-        var userId = _mainUser.Id; 
+        var startDate = DateTime.UtcNow.AddMonths(-1).ToString("MM-dd-yyyy");
+        var endDate = DateTime.UtcNow.AddMonths(1).ToString("MM-dd-yyyy");
+        var categoryId = _category1.Id.Value;
+        var userId = _mainUser.Id.Value; 
         var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 

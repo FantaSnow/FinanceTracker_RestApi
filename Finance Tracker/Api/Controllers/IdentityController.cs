@@ -1,16 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Api.Dtos;
-using Api.Dtos.Statistics;
-using Api.Modules;
 using Api.Modules.Errors;
-using Application.Common.Interfaces.Queries;
 using Application.Tickets.Commands;
-using Domain.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Domain.Users;
 using MediatR;
 
 namespace Api.Controllers;
