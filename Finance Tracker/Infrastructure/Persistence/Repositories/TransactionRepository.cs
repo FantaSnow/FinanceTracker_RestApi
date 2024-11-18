@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
+using Domain.Categorys;
 using Domain.Transactions;
 using Domain.Users;
 using Microsoft.EntityFrameworkCore;
@@ -77,6 +78,38 @@ public class TransactionRepository(ApplicationDbContext context) : ITransactionR
                 x.CreatedAt > startDateTime && 
                 x.CreatedAt < endDateTime && 
                 x.Sum > 0)
+            .ToListAsync(cancellationToken);
+        return entity;
+
+    }
+    
+    public async Task<IReadOnlyList<Transaction>> GetAllMinusByUserAndDate(UserId id, DateTime startDateTime, DateTime endDateTime,CategoryId categoryId, CancellationToken cancellationToken)
+    {
+        var entity = await context.Transactions
+            .Include(t => t.Category)
+            .AsNoTracking()
+            .Where(x => 
+                x.UserId == id && 
+                x.CreatedAt > startDateTime && 
+                x.CreatedAt < endDateTime && 
+                x.Sum < 0 &&
+                x.CategoryId == categoryId)
+            .ToListAsync(cancellationToken);
+        return entity;
+
+    }
+    
+    public async Task<IReadOnlyList<Transaction>> GetAllPlusByUserAndDate(UserId id, DateTime startDateTime, DateTime endDateTime, CategoryId categoryId,CancellationToken cancellationToken)
+    {
+        var entity = await context.Transactions
+            .Include(t => t.Category)
+            .AsNoTracking()
+            .Where(x => 
+                x.UserId == id && 
+                x.CreatedAt > startDateTime && 
+                x.CreatedAt < endDateTime && 
+                x.Sum > 0 &&
+                x.CategoryId == categoryId)
             .ToListAsync(cancellationToken);
         return entity;
 

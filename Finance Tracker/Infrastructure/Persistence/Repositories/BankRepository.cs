@@ -48,7 +48,7 @@ public class BankRepository(ApplicationDbContext context) : IBankRepository, IBa
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Bank>> GetAllByUser(UserId id, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Bank>> GetAllByUser(UserId id,CancellationToken cancellationToken)
     {
         var entity = await context.Banks
             .AsNoTracking()

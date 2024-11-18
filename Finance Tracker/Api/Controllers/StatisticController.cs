@@ -36,6 +36,30 @@
                 t => StatisicDto.FromDomainModel(t),
                 e => e.ToObjectResult());
         }
+        
+        [Authorize]
+        [HttpGet("getByTimeAndCategory/{startDate:datetime}/{endDate:datetime}/user=/{userId:guid}")]
+        public async Task<ActionResult<StatisicDto>> GetByTimeAndCategory(
+            [FromRoute] Guid userId, [FromRoute] DateTime startDate, [FromRoute] DateTime endDate,
+            CancellationToken cancellationToken)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
+            var userIdFromToken = new Guid(userIdClaim!.Value);
+
+            var input = new GetByTimeAndCategoryForAllCommand
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                UserId = userId,
+                UserIdFromToken=userIdFromToken
+            };
+
+            var result = await sender.Send(input, cancellationToken);
+
+            return result.Match<ActionResult<StatisicDto>>(
+                t => StatisicDto.FromDomainModel(t),
+                e => e.ToObjectResult());
+        }
 
         [Authorize]
         [HttpGet("getForAllCategorys/{startDate:datetime}/{endDate:datetime}/user=/{userId:guid}")]

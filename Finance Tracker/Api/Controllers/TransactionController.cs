@@ -2,6 +2,7 @@ using Api.Dtos.Transactions;
 using Api.Modules.Errors;
 using Application.Common.Interfaces.Queries;
 using Application.Transactions.Commands;
+using Domain.Categorys;
 using Domain.Transactions;
 using Domain.Users;
 using MediatR;
@@ -41,6 +42,29 @@ public class TranasctionController(ISender sender, ITransactionQueries transacti
         CancellationToken cancellationToken)
     {
         var entities = await transactionQueries.GetAllPlusByUserAndDate(new UserId(userId),startDate, endDate,cancellationToken);
+
+        return entities.Select(TransactionDto.FromDomainModel).ToList();
+    }
+
+    
+    [AllowAnonymous]
+    [HttpGet("getAllMinusByUserAndDateAndCategory/{startDate:datetime}/{endDate:datetime}/{categoryId:guid}/user=/{userId:guid}")]
+    public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAllMinusByUserAndDateAndCategory(
+        [FromRoute] Guid userId, [FromRoute] DateTime startDate,[FromRoute] Guid categoryId, [FromRoute] DateTime endDate,
+        CancellationToken cancellationToken)
+    {
+        var entities = await transactionQueries.GetAllMinusByUserAndDate(new UserId(userId),startDate, endDate,new CategoryId(categoryId) ,cancellationToken);
+
+        return entities.Select(TransactionDto.FromDomainModel).ToList();
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("getAllPlusByUserAndDateAndCategory/{startDate:datetime}/{endDate:datetime}/{categoryId:guid}/user=/{userId:guid}")]
+    public async Task<ActionResult<IReadOnlyList<TransactionDto>>> GetAllPlusByUserAndDateAndCategory(
+        [FromRoute] Guid userId, [FromRoute] DateTime startDate, [FromRoute] Guid categoryId, [FromRoute] DateTime endDate,
+        CancellationToken cancellationToken)
+    {
+        var entities = await transactionQueries.GetAllPlusByUserAndDate(new UserId(userId),startDate, endDate,new CategoryId(categoryId),cancellationToken);
 
         return entities.Select(TransactionDto.FromDomainModel).ToList();
     }

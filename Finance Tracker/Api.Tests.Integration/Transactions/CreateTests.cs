@@ -42,14 +42,14 @@ public class CreateTests : BaseIntegrationTest, IAsyncLifetime
     public async Task CreateTransaction_Success_WhenUserCreatesOwnTransaction()
     {
         var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
+         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+         
         var request = new TransactionCreateDto
         (
             Sum : 100,
             CategoryId : _category1.Id.Value
         );
-
-        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-
+        
         var response = await Client.PostAsJsonAsync($"transactions/create/{_mainUser.Id}", request);
 
         response.EnsureSuccessStatusCode();
