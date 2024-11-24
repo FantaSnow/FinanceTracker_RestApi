@@ -1,5 +1,6 @@
 using Application.Common.Interfaces.Queries;
 using Application.Common.Interfaces.Repositories;
+using Domain.Banks;
 using Domain.BankTransactions;
 using Domain.Categorys;
 using Domain.Transactions;
@@ -52,7 +53,14 @@ public class BankTransactionRepository(ApplicationDbContext context) : IBankTran
         return entity == null ? Option.None<BankTransaction>() : Option.Some(entity);
     }
     
-    
+    public async Task<IReadOnlyList<BankTransaction>> GetAllByBank(BankId id, CancellationToken cancellationToken)
+    {
+        var entity = await context.BankTransactions
+            .AsNoTracking()
+            .Where(x => x.BankId == id)
+            .ToListAsync(cancellationToken);
+        return entity;
+    }
     public async Task<IReadOnlyList<BankTransaction>> GetAllByUser(UserId id, CancellationToken cancellationToken)
     {
         var entity = await context.BankTransactions

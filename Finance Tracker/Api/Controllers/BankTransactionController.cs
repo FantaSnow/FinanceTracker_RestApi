@@ -3,6 +3,7 @@ using Api.Dtos.Transactions;
 using Api.Modules.Errors;
 using Application.BankTransactions.Commands;
 using Application.Common.Interfaces.Queries;
+using Domain.Banks;
 using Domain.BankTransactions;
 using Domain.Users;
 using MediatR;
@@ -24,6 +25,15 @@ public class BankTranasctionController(ISender sender, IBankTransactionQueries b
         return entities.Select(BankTransactionDto.FromDomainModel).ToList();
     }
 
+    [AllowAnonymous]
+    [HttpGet("getAllByBank/{bankId:guid}")]
+    public async Task<ActionResult<IReadOnlyList<BankTransactionDto>>> GetAllByBankId([FromRoute] Guid bankId,
+        CancellationToken cancellationToken)
+    {
+        var entities = await bankTransactionQueries.GetAllByBank(new BankId(bankId), cancellationToken);
+
+        return entities.Select(BankTransactionDto.FromDomainModel).ToList();
+    }
     
     [AllowAnonymous]
     [HttpGet("getAllByUser/{userId:guid}")]
