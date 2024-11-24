@@ -94,7 +94,7 @@ public class BankTranasctionController(ISender sender, IBankTransactionQueries b
     [HttpPut("update/{bankTransactionId:guid}")]
     public async Task<ActionResult<BankTransactionDto>> Update(
         [FromRoute] Guid bankTransactionId,
-        [FromBody] TransactionUpdateDto request,
+        [FromBody] BankTransactionUpdateDto request,
         CancellationToken cancellationToken)
     {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
@@ -102,7 +102,7 @@ public class BankTranasctionController(ISender sender, IBankTransactionQueries b
         
         var input = new UpdateBankTransactionCommand
         {
-            Sum = request.Sum,
+            Sum = request.Amount,
             UserIdFromToken = userIdFromToken,
             BankTransactionId = bankTransactionId
         };

@@ -67,29 +67,6 @@ public class BankController(ISender sender, IBankQueries bankQueries) : Controll
             e => e.ToObjectResult());
     }
 
-    [Authorize]
-    [HttpPut("addToBalance/{bankId:guid}/{balanceToAdd:decimal}")]
-    public async Task<ActionResult<BankDto>> AddToBalance(
-        [FromRoute] Guid bankId,
-        [FromRoute] decimal balanceToAdd,
-        CancellationToken cancellationToken)
-    {
-        var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userid");
-        var userId = new Guid(userIdClaim!.Value);
-        
-        var input = new AddBankBalanceCommand
-        {
-            BankId = bankId,
-            BalanceToAdd = balanceToAdd,
-            UserIdFromToken = userId
-        };
-
-        var result = await sender.Send(input, cancellationToken);
-
-        return result.Match<ActionResult<BankDto>>(
-            f => BankDto.FromDomainModel(f),
-            e => e.ToObjectResult());
-    }
 
     [Authorize]
     [HttpDelete("delete/{bankId:guid}")]

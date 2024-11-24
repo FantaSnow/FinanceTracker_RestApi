@@ -1,6 +1,8 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Api.Dtos.Banks;
+using Api.Dtos.Transactions;
 using Api.Dtos.Users;
 using Domain.Categorys;
 using Domain.Transactions;
@@ -37,68 +39,81 @@ public class UpdateTests : BaseIntegrationTest, IAsyncLifetime
         _transaction1 = TranasctionsData.Transactin1(_mainUser.Id, _category1.Id);
         _transaction2 = TranasctionsData.Transactin2(_secondUser.Id, _category2.Id);
     }
-
-    [Fact]
-    public async Task UpdateUser_Fails_WhenUserIsNotUpdatingOwnData()
-    {
-        // Arrange
-        var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
-        var userId = _secondUser.Id;
-        var updateRequest = new UserUpdateDto
-        (
-            Login : "UpdatedLogin",
-            Password : "UpdatedPassword",
-            Balance : 200.00m
-        );
-
-        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-
-        // Act
-        var response = await Client.PutAsJsonAsync($"users/update/{userId}", updateRequest);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
-    }
-
-    [Fact]
-    public async Task UpdateUser_Success_WhenAdminIsUpdatingAnyUser()
+      [Fact]
+    public async Task UpdateTransaction_Success_WhenAdminUpdates()
     {
         // Arrange
         var authToken = await GenerateAuthTokenAsync(_adminUser.Login, _adminUser.Password);
-        var userId = _secondUser.Id;
-        var updateRequest = new UserUpdateDto
-        (
-            Login: "AdminUpdatedLogin",
-            Password: "AdminUpdatedPassword",
-            Balance : 300.00m
+        var request = new TransactionUpdateDto(
+            Sum: 100m,
+            CategoryId: _category1.Id.Value
         );
-
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
         // Act
-        var response = await Client.PutAsJsonAsync($"users/update/{userId}", updateRequest);
+        var response = await Client.PutAsJsonAsync($"transactions/update/{_transaction1.Id}", request);
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var updatedUser = await Context.Users.FindAsync(userId);
-        updatedUser?.Login.Should().Be("AdminUpdatedLogin");
-        updatedUser?.Balance.Should().Be(300.00m);
+        var updatedBank = await Context.Transactions.FindAsync(_transaction1.Id);
+        updatedBank.Should().NotBeNull();
+        updatedBank!.Sum.Should().Be(100m);
+        updatedBank!.CategoryId.Value.Should().Be(_category1.Id.Value);
+
     }
 
     [Fact]
-    public async Task UpdateUser_Fails_WhenNoAuthTokenProvided()
+    public async Task UpdateTransaction_Success_WhenUserUpdatesOwn()
     {
         // Arrange
-        var userId = _mainUser.Id;
-        var updateRequest = new UserUpdateDto
-        (
-            Login: "UpdatedLogin",
-            Password: "UpdatedPassword",
-            Balance: 200.00m
+        var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
+        var request = new TransactionUpdateDto(
+            Sum: 100m,
+            CategoryId: _category1.Id.Value
         );
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
 
         // Act
-        var response = await Client.PutAsJsonAsync($"users/update/{userId}", updateRequest);
+        var response = await Client.PutAsJsonAsync($"transactions/update/{_transaction1.Id}", request);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var updatedBank = await Context.Transactions.FindAsync(_transaction1.Id);
+        updatedBank.Should().NotBeNull();
+        updatedBank!.Sum.Should().Be(100m);
+        updatedBank.CategoryId!.Value.Should().Be(_category1.Id.Value);
+
+    }
+
+    [Fact]
+    public async Task UpdateTransaction_Fails_WhenUserUpdatesOther()
+    {
+        // Arrange
+        var authToken = await GenerateAuthTokenAsync(_mainUser.Login, _mainUser.Password);
+        var request = new TransactionUpdateDto(
+            Sum: 100m,
+            CategoryId: _category1.Id.Value
+        );
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+
+        // Act
+        var response = await Client.PutAsJsonAsync($"transactions/update/{_transaction2.Id}", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+
+
+    }
+    [Fact]
+    public async Task UpdateTransaction_Fails_WhenUserNotAuthorized()
+    {
+        // Arrange
+        var request = new TransactionUpdateDto(
+            Sum: 100m,
+            CategoryId: _category1.Id.Value
+        );
+        // Act
+        var response = await Client.PutAsJsonAsync($"transactions/update/{_transaction1.Id}", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
