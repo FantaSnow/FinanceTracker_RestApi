@@ -6,14 +6,14 @@ namespace Application.Transactions.Exceptions;
 
 public abstract class TransactionException : Exception
 {
-    public TransactionId? BankId { get; }
+    public TransactionId? TransactionId { get; }
     public UserId? UserId { get; }
     public CategoryId? CategoryId { get; }
 
-    protected TransactionException(TransactionId? bankId, string message, Exception? innerException = null)
+    protected TransactionException(TransactionId? transactionId, string message, Exception? innerException = null)
         : base(message, innerException)
     {
-        BankId = bankId;
+        TransactionId = transactionId;
     }
 
     protected TransactionException(UserId? userId, string message, Exception? innerException = null)

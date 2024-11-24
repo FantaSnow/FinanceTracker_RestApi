@@ -16,7 +16,10 @@ public record UpdateTransactionCommand : IRequest<Result<Transaction, Transactio
     public required Guid UserIdFromToken { get; init; }
 }
 
-public class UpdateTransactionCommandHandler(ITransactionRepository transactionRepository, IUserRepository userRepository)
+public class UpdateTransactionCommandHandler(
+    ITransactionRepository transactionRepository,
+    IUserRepository userRepository,
+    ICategoryRepository categoryRepository)
     : IRequestHandler<UpdateTransactionCommand, Result<Transaction, TransactionException>>
 {
     public async Task<Result<Transaction, TransactionException>> Handle(UpdateTransactionCommand request,
@@ -29,7 +32,8 @@ public class UpdateTransactionCommandHandler(ITransactionRepository transactionR
             async t =>
             {
                 var userFromTransactionId = t.UserId;
-                var existingUserFromTransaction = await userRepository.GetById(userFromTransactionId, cancellationToken);
+                var existingUserFromTransaction =
+                    await userRepository.GetById(userFromTransactionId, cancellationToken);
 
                 return await existingUserFromTransaction.Match<Task<Result<Transaction, TransactionException>>>(
                     async uft =>
@@ -40,15 +44,25 @@ public class UpdateTransactionCommandHandler(ITransactionRepository transactionR
                         return await existingUserFromToken.Match<Task<Result<Transaction, TransactionException>>>(
                             async userFromToken =>
                             {
-                                return await UpdateEntity(t, uft, userFromToken, request.Sum, new CategoryId(request.CategoryId), cancellationToken);
+                                var categoryId = new CategoryId(request.CategoryId);
+                                var existingCategory = await categoryRepository.GetById(categoryId, cancellationToken);
+
+                                return await existingCategory.Match(
+                                    async category => await UpdateEntity(t, uft, userFromToken, request.Sum, category.Id,
+                                        cancellationToken),
+                                    () => Task.FromResult<Result<Transaction, TransactionException>>(
+                                        new CategoryNotFoundException(categoryId)));
                             },
-                            () => Task.FromResult<Result<Transaction, TransactionException>>(new UserNotFoundException(userIdFromToken))
+                            () => Task.FromResult<Result<Transaction, TransactionException>>(
+                                new UserNotFoundException(userIdFromToken))
                         );
                     },
-                    () => Task.FromResult<Result<Transaction, TransactionException>>(new UserNotFoundException(userFromTransactionId))
+                    () => Task.FromResult<Result<Transaction, TransactionException>>(
+                        new UserNotFoundException(userFromTransactionId))
                 );
             },
-            () => Task.FromResult<Result<Transaction, TransactionException>>(new TransactionNotFoundException(transactionId))
+            () => Task.FromResult<Result<Transaction, TransactionException>>(
+                new TransactionNotFoundException(transactionId))
         );
     }
 
@@ -71,7 +85,9 @@ public class UpdateTransactionCommandHandler(ITransactionRepository transactionR
                 transaction.UpdateDatails(sum, categoryId);
                 return await transactionRepository.Update(transaction, cancellationToken);
             }
-            return await Task.FromResult<Result<Transaction, TransactionException>>(new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, userFromTransaction.Id));
+
+            return await Task.FromResult<Result<Transaction, TransactionException>>(
+                new YouDoNotHaveTheAuthorityToDo(userFromToken.Id, userFromTransaction.Id));
         }
         catch (Exception exception)
         {

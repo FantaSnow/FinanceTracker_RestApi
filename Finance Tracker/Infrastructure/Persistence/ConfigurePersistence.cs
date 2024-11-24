@@ -46,5 +46,9 @@ public static class ConfigurePersistence
         services.AddScoped<BankRepository>();
         services.AddScoped<IBankRepository>(provider => provider.GetRequiredService<BankRepository>());
         services.AddScoped<IBankQueries>(provider => provider.GetRequiredService<BankRepository>());
+        
+        services.AddScoped<BankTransactionRepository>();
+        services.AddScoped<IBankTransactionRepository>(provider => provider.GetRequiredService<BankTransactionRepository>());
+        services.AddScoped<IBankTransactionQueries>(provider => provider.GetRequiredService<BankTransactionRepository>());
     }
 }
